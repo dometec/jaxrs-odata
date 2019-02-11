@@ -31,7 +31,7 @@
   </licenses>
 
   <scm>
-    <connection>scm:git:git://github.com/dometec/jaxrs-odata.git</connection>
+    <connection>scm:git:https://github.com/dometec/jaxrs-odata.git</connection>
     <url>https://github.com/dometec/jaxrs-odata</url>
     <tag>jaxrs-odata-1.0.0</tag>
   </scm>
