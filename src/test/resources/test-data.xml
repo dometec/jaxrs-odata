@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+	<test_entity
+		id="1"
+		string_type_1="app1"
+		string_type_2="distribution_name"
+		string_type_4="token"
+		insert_date="2016-01-01 12:00:00"
+		last_update="2017-01-01 12:00:00"
+		localdatetime_type="2017-01-01 13:00:00"
+		localtime_type="13:00:00"
+		localdate_type="2017-01-01"
+		not_implemented_type="0.00000001"
+		enum_type="Enum1"
+		version="1"
+	/>
+	<test_entity
+		id="2"
+		string_type_1="app2"
+		string_type_2="distribution_name"
+		string_type_3="string"
+		string_type_4="token"
+		insert_date="2016-01-01 12:00:00"
+		last_update="2017-01-01 12:00:00"
+		localdatetime_type="2017-01-02 12:00:00"
+		localtime_type="14:00:00"
+		localdate_type="2017-01-03"
+		enum_type="Enum2"
+		version="2"
+	/>
+	<test_entity
+		id="3"
+		string_type_1="app2"
+		string_type_2="DISTRIBUTION_NAME"
+		string_type_3="string1"
+		string_type_4="token2"
+		insert_date="2016-12-01 12:00:00"
+		last_update="2017-12-01 12:00:00"
+		localtime_type="13:00:00"
+		localdate_type="2017-01-02"
+		enum_type="Enum3"
+		version="3"
+	/>
+</dataset>

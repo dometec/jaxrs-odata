@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="INFO">
+
+  <Appenders>
+    <Console name="console" target="SYSTEM_OUT">
+      <PatternLayout pattern="%date [%-10thread] %-5level %logger{60} - %message%n" />
+    </Console>
+  </Appenders>
+
+  <Loggers>
+    <Root level="info" additivity="false">
+      <AppenderRef ref="console" />
+    </Root>
+  </Loggers>
+
+</Configuration>
