@@ -1,7 +1,9 @@
+env:
+  global:
+    - CODECOV_TOKEN:5fef8d9b-a998-42a6-9338-63ce84799b93
 language: java
 script: mvn -q package
 jdk:
 - openjdk8
 after_success:
   - bash <(curl -s https://codecov.io/bash)
-
