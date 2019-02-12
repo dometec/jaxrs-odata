@@ -1,5 +1,5 @@
 language: java
-script: mvn -q install
+script: mvn -q package
 jdk:
 - openjdk8
 after_success:
