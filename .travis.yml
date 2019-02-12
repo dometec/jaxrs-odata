@@ -1,6 +1,6 @@
 env:
   global:
-    - CODECOV_TOKEN:5fef8d9b-a998-42a6-9338-63ce84799b93
+    - CODECOV_TOKEN=5fef8d9b-a998-42a6-9338-63ce84799b93
 language: java
 script: mvn -q package
 jdk:
