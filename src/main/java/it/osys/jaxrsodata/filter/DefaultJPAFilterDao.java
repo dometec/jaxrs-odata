@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
@@ -45,7 +46,8 @@ public class DefaultJPAFilterDao<T> {
 			this.value = this.context.getChild(indexValue + 2).getText().replace("'", "");
 			// [contains, (, device_type, ,, '7', )]
 		} else {
-			this.value = convValueToFieldType(root.get(this.field.toString()).getJavaType(), this.value.toString().replace("'", ""));
+			Path<Object> path = getPathFromField(this.field.toString());
+			this.value = convValueToFieldType(path.getJavaType(), this.value.toString().replace("'", ""));
 		}
 	}
 
@@ -140,85 +142,99 @@ public class DefaultJPAFilterDao<T> {
 	 * 
 	 * @return Predicate
 	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public Predicate getPredicate() {
 
 		if (this.context != null) {
 
+			Path path = getPathFromField(this.field.toString());
+
 			if (this.context.NULL() != null) {
 				if (this.context.EQ() != null) {
-					return cb.isNull(root.get(this.field.toString()));
+					return cb.isNull(path);
 				}
-				return cb.isNotNull(root.get(this.field.toString()));
+				return cb.isNotNull(path);
 			}
 
 			if (context.CONTAINS() != null) {
 				if (context.parent != null && context.getParent().getChild(0).getText().equals("not"))
-					return cb.notLike(root.get(this.field.toString()).as(String.class), "%" + this.value.toString() + "%");
-				return cb.like(root.get(this.field.toString()).as(String.class), "%" + this.value.toString() + "%");
+					return cb.notLike(path.as(String.class), "%" + this.value.toString() + "%");
+				return cb.like(path.as(String.class), "%" + this.value.toString() + "%");
 			}
 
 			if (this.context.EQ() != null) {
 				if (context.TOLOWER() != null) {
-					return cb.equal(cb.lower(root.get(this.field.toString())), this.value);
+					return cb.equal(cb.lower(path), this.value);
 				} else if (context.TOUPPER() != null) {
-					return cb.equal(cb.upper(root.get(this.field.toString())), this.value);
+					return cb.equal(cb.upper(path), this.value);
 				} else
-					return cb.equal(root.get(this.field.toString()), this.value);
+					return cb.equal(path, this.value);
 			}
 
 			if (this.context.NE() != null)
-				return cb.notEqual(root.get(this.field.toString()), this.value);
+				return cb.notEqual(path, this.value);
 
 			if (this.context.GT() != null) {
-				if (root.get(this.field.toString()).getJavaType() == LocalDateTime.class)
-					return cb.greaterThan(root.get(this.field.toString()), LocalDateTime.parse(this.value.toString()));
-				if (root.get(this.field.toString()).getJavaType() == LocalTime.class)
-					return cb.greaterThan(root.get(this.field.toString()), LocalTime.parse(this.value.toString()));
-				if (root.get(this.field.toString()).getJavaType() == LocalDate.class)
-					return cb.greaterThan(root.get(this.field.toString()), LocalDate.parse(this.value.toString()));
-				if (root.get(this.field.toString()).getJavaType() == Long.class)
-					return cb.greaterThan(root.get(this.field.toString()), Long.parseLong(this.value.toString()));
-				return cb.greaterThan(root.get(this.field.toString()), Integer.parseInt(this.value.toString()));
+				if (path.getJavaType() == LocalDateTime.class)
+					return cb.greaterThan(path, LocalDateTime.parse(this.value.toString()));
+				if (path.getJavaType() == LocalTime.class)
+					return cb.greaterThan(path, LocalTime.parse(this.value.toString()));
+				if (path.getJavaType() == LocalDate.class)
+					return cb.greaterThan(path, LocalDate.parse(this.value.toString()));
+				if (path.getJavaType() == Long.class)
+					return cb.greaterThan(path, Long.parseLong(this.value.toString()));
+				return cb.greaterThan(path, Integer.parseInt(this.value.toString()));
 			}
 
 			if (this.context.GE() != null) {
-				if (root.get(this.field.toString()).getJavaType() == LocalDateTime.class)
-					return cb.greaterThanOrEqualTo(root.get(this.field.toString()), LocalDateTime.parse(this.value.toString()));
-				if (root.get(this.field.toString()).getJavaType() == LocalTime.class)
-					return cb.greaterThanOrEqualTo(root.get(this.field.toString()), LocalTime.parse(this.value.toString()));
-				if (root.get(this.field.toString()).getJavaType() == LocalDate.class)
-					return cb.greaterThanOrEqualTo(root.get(this.field.toString()), LocalDate.parse(this.value.toString()));
-				if (root.get(this.field.toString()).getJavaType() == Long.class)
-					return cb.greaterThanOrEqualTo(root.get(this.field.toString()), Long.parseLong(this.value.toString()));
-				return cb.greaterThanOrEqualTo(root.get(this.field.toString()), Integer.parseInt(this.value.toString()));
+				if (path.getJavaType() == LocalDateTime.class)
+					return cb.greaterThanOrEqualTo(path, LocalDateTime.parse(this.value.toString()));
+				if (path.getJavaType() == LocalTime.class)
+					return cb.greaterThanOrEqualTo(path, LocalTime.parse(this.value.toString()));
+				if (path.getJavaType() == LocalDate.class)
+					return cb.greaterThanOrEqualTo(path, LocalDate.parse(this.value.toString()));
+				if (path.getJavaType() == Long.class)
+					return cb.greaterThanOrEqualTo(path, Long.parseLong(this.value.toString()));
+				return cb.greaterThanOrEqualTo(path, Integer.parseInt(this.value.toString()));
 			}
 
 			if (this.context.LT() != null) {
-				if (root.get(this.field.toString()).getJavaType() == LocalDateTime.class)
-					return cb.lessThan(root.get(this.field.toString()), LocalDateTime.parse(this.value.toString()));
-				if (root.get(this.field.toString()).getJavaType() == LocalTime.class)
-					return cb.lessThan(root.get(this.field.toString()), LocalTime.parse(this.value.toString()));
-				if (root.get(this.field.toString()).getJavaType() == LocalDate.class)
-					return cb.lessThan(root.get(this.field.toString()), LocalDate.parse(this.value.toString()));
-				if (root.get(this.field.toString()).getJavaType() == Long.class)
-					return cb.lessThan(root.get(this.field.toString()), Long.parseLong(this.value.toString()));
-				return cb.lessThan(root.get(this.field.toString()), Integer.parseInt(this.value.toString()));
+				if (path.getJavaType() == LocalDateTime.class)
+					return cb.lessThan(path, LocalDateTime.parse(this.value.toString()));
+				if (path.getJavaType() == LocalTime.class)
+					return cb.lessThan(path, LocalTime.parse(this.value.toString()));
+				if (path.getJavaType() == LocalDate.class)
+					return cb.lessThan(path, LocalDate.parse(this.value.toString()));
+				if (path.getJavaType() == Long.class)
+					return cb.lessThan(path, Long.parseLong(this.value.toString()));
+				return cb.lessThan(path, Integer.parseInt(this.value.toString()));
 			}
 
 			if (this.context.LE() != null) {
-				if (root.get(this.field.toString()).getJavaType() == LocalDateTime.class)
-					return cb.lessThanOrEqualTo(root.get(this.field.toString()), LocalDateTime.parse(this.value.toString()));
-				if (root.get(this.field.toString()).getJavaType() == LocalTime.class)
-					return cb.lessThanOrEqualTo(root.get(this.field.toString()), LocalTime.parse(this.value.toString()));
-				if (root.get(this.field.toString()).getJavaType() == LocalDate.class)
-					return cb.lessThanOrEqualTo(root.get(this.field.toString()), LocalDate.parse(this.value.toString()));
-				if (root.get(this.field.toString()).getJavaType() == Long.class)
-					return cb.lessThanOrEqualTo(root.get(this.field.toString()), Long.parseLong(this.value.toString()));
-				return cb.lessThanOrEqualTo(root.get(this.field.toString()), Integer.parseInt(this.value.toString()));
+				if (path.getJavaType() == LocalDateTime.class)
+					return cb.lessThanOrEqualTo(path, LocalDateTime.parse(this.value.toString()));
+				if (path.getJavaType() == LocalTime.class)
+					return cb.lessThanOrEqualTo(path, LocalTime.parse(this.value.toString()));
+				if (path.getJavaType() == LocalDate.class)
+					return cb.lessThanOrEqualTo(path, LocalDate.parse(this.value.toString()));
+				if (path.getJavaType() == Long.class)
+					return cb.lessThanOrEqualTo(path, Long.parseLong(this.value.toString()));
+				return cb.lessThanOrEqualTo(path, Integer.parseInt(this.value.toString()));
 			}
 		}
 
 		return null;
+	}
+
+	private Path<Object> getPathFromField(String field) {
+		String[] fieldname = field.split("/");
+		Path<Object> path = null;
+		for (int idx = 0; idx < fieldname.length; idx++)
+			if (path != null)
+				path = path.get(fieldname[idx]);
+			else
+				path = root.get(fieldname[idx]);
+		return path;
 	}
 
 }

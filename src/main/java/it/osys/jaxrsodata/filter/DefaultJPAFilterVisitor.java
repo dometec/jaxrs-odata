@@ -43,8 +43,9 @@ public class DefaultJPAFilterVisitor<T> implements JPAFilterVisitor<T> {
 		filterDao.setRoot(root);
 		filterDao.setup(context);
 
-		if (filterDao.getPredicate() != null)
-			return filterDao.getPredicate();
+		Predicate predicate = filterDao.getPredicate();
+		if (predicate != null)
+			return predicate;
 
 		// if (context.FIELD() != null)
 		// return root.get(context.FIELD().getText());

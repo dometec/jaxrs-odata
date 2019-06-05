@@ -68,7 +68,7 @@ GE: 'ge';
 LT: 'lt';
 LE: 'le';
 NUMBER: [0-9]+;
-FIELD: [A-Za-z0-9]+;
+FIELD: [A-Za-z0-9/]+;
 
 
 WS: [ \t\r\n]+ -> skip;

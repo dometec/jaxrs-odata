@@ -54,8 +54,14 @@ public class TestEntity implements InternalDateEnable, Serializable {
 	@Column(name = "not_implemented_type")
 	private Float notImplementedType;
 
+	private TestEmbeddedEntity address;
+
 	@Version
 	private int version;
+
+	public TestEntity() {
+		this.address = new TestEmbeddedEntity();
+	}
 
 	public InternalDate getInternalDate() {
 		return internalDate;
@@ -135,6 +141,14 @@ public class TestEntity implements InternalDateEnable, Serializable {
 
 	public void setLocalDateTimeType(LocalDateTime localDateTimeType) {
 		this.localDateTimeType = localDateTimeType;
+	}
+
+	public TestEmbeddedEntity getAddress() {
+		return address;
+	}
+
+	public void setAddress(TestEmbeddedEntity address) {
+		this.address = address;
 	}
 
 	public int getVersion() {

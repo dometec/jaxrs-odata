@@ -45,6 +45,19 @@ public class DefaultJPAFilterDaoTest extends HSQLDBInitialize {
 	}
 
 	@Test
+	public void testInternalDate() throws NotImplementedException {
+		// Filter query.
+		final String filter = "internalDate/lastUpdate ge '2010-01-01T12:00:00'";
+
+		// Expected result.
+		final int expSize = 3;
+
+		List<TestEntity> result = getFilteredResults(filter);
+
+		Assert.assertEquals(expSize, result.size());
+	}
+
+	@Test
 	public void getFieldANDStrings() throws NotImplementedException {
 		// Filter query.
 		final String filter = "stringType1 eq 'app1' and stringType4 eq 'token'";
@@ -226,6 +239,21 @@ public class DefaultJPAFilterDaoTest extends HSQLDBInitialize {
 		Assert.assertEquals(exp1Id, result.get(0).getId());
 	}
 
+	@Test
+	public void getSubFieldCONTAINSString() throws NotImplementedException {
+		// Filter query.
+		final String filter = "contains(address/city, 'citt')";
+
+		// Expected result.
+		final int expSize = 3;
+		final Long exp1Id = 1L;
+
+		List<TestEntity> result = getFilteredResults(filter);
+
+		Assert.assertEquals(expSize, result.size());
+		Assert.assertEquals(exp1Id, result.get(0).getId());
+	}
+
 	/*
 	 * Test NULL and NOTNULL
 	 */
@@ -290,6 +318,25 @@ public class DefaultJPAFilterDaoTest extends HSQLDBInitialize {
 		List<TestEntity> result = getFilteredResults(filter);
 
 		Assert.assertEquals(1, result.size());
+		Assert.assertEquals(expDevType, result.get(0).getStringType1());
+		Assert.assertEquals(expId, result.get(0).getId());
+	}
+
+	/*
+	 * Test EQUALS
+	 */
+	@Test
+	public void getFieldWithParentesisString() throws NotImplementedException {
+		// Filter query.
+		final String filter = "(stringType1 ne null or stringType3 ne null) and stringType4 eq 'token'";
+
+		// Expected result.
+		final Long expId = 1L;
+		final String expDevType = "app1";
+
+		List<TestEntity> result = getFilteredResults(filter);
+
+		Assert.assertEquals(2, result.size());
 		Assert.assertEquals(expDevType, result.get(0).getStringType1());
 		Assert.assertEquals(expId, result.get(0).getId());
 	}
