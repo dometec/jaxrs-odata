@@ -91,7 +91,10 @@ public class DefaultJPAFilterDao<T> {
 		if (javaType.isAssignableFrom(LocalDate.class))
 			return (F) LocalDate.parse(value);
 
-		throw new NotImplementedException("Field type " + javaType.getClass().getName() + " not implemented yet!");
+		if (javaType.isAssignableFrom(Boolean.class) || javaType.isAssignableFrom(boolean.class))
+			return (F) Boolean.valueOf(value);
+
+		throw new NotImplementedException("Field type " + javaType.getName() + " not implemented yet!");
 	}
 
 	/**

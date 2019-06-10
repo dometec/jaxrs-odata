@@ -47,18 +47,6 @@ public class DefaultJPAFilterVisitor<T> implements JPAFilterVisitor<T> {
 		if (predicate != null)
 			return predicate;
 
-		// if (context.FIELD() != null)
-		// return root.get(context.FIELD().getText());
-		//
-		// if (context.NUMBER() != null)
-		// return Integer.parseInt(context.NUMBER().getText());
-		//
-		// if (context.BR_CLOSE() != null)
-		// return visit(context.expr(0));
-		//
-		// if (context.BR_OPEN() != null)
-		// return visit(context.expr(0));
-
 		throw new IllegalStateException();
 	}
 

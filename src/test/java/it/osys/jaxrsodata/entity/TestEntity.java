@@ -41,6 +41,9 @@ public class TestEntity implements InternalDateEnable, Serializable {
 
 	@Column(name = "string_type_4")
 	private String stringType4;
+	
+	@Column(name = "boolfield")
+	private boolean boolfield;
 
 	@Column(name = "localtime_type")
 	private LocalTime localTimeType;

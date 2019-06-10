@@ -16,11 +16,13 @@ expr :
 | FIELD EQ DATETIME
 | FIELD EQ STRINGLITERAL
 | FIELD EQ NULL
+| FIELD EQ BOOLEAN
 | FIELD NE NUMBER
 | FIELD NE TIME
 | FIELD NE DATETIME
 | FIELD NE STRINGLITERAL
 | FIELD NE NULL
+| FIELD NE BOOLEAN
 | FIELD GT NUMBER
 | FIELD GT TIME
 | FIELD GT DATETIME
@@ -51,11 +53,14 @@ ISOTime: D D ':' D D ':' D D ('.' D)?;
 TIME: '\'' ISOTime ('Z' | TZO)? '\'';
 DATETIME: '\'' (ISODate ('T' ISOTime ('Z' | TZO)?)?) '\'';
 STRINGLITERAL: '\'' (~'\'')* '\'';
+BOOLEAN: TRUE | FALSE;
 NULL: 'null';
 COMMA: ',';
 CONTAINS: 'contains';
 TOLOWER: 'tolower';
 TOUPPER: 'toupper';
+TRUE: 'true';
+FALSE: 'false';
 NOT: 'not';
 BR_OPEN: '(';
 BR_CLOSE: ')';

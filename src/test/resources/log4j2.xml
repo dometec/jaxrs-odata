@@ -8,7 +8,8 @@
   </Appenders>
 
   <Loggers>
-    <Root level="info" additivity="false">
+    <Logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="TRACE"></Logger>
+    <Root level="info">
       <AppenderRef ref="console" />
     </Root>
   </Loggers>

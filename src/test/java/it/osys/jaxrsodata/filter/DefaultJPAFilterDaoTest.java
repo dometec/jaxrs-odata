@@ -127,6 +127,24 @@ public class DefaultJPAFilterDaoTest extends HSQLDBInitialize {
 		Assert.assertEquals(exp1Id, result.get(0).getId());
 	}
 
+	/*
+	 * Test on Boolean field
+	 */
+	@Test
+	public void testFilterOnBooleanField() throws NotImplementedException {
+		// Filter query.
+		final String filter = "boolfield eq true";
+
+		// Expected result.
+		final int expSize = 2;
+		final Long exp1Id = 1L;
+
+		List<TestEntity> result = getFilteredResults(filter);
+
+		Assert.assertEquals(expSize, result.size());
+		Assert.assertEquals(exp1Id, result.get(0).getId());
+	}
+	
 	@Test
 	public void getFieldNOTCONTAINSInteger() throws NotImplementedException {
 		// Filter query.
