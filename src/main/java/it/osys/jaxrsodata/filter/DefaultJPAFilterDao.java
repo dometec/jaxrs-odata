@@ -3,10 +3,10 @@ package it.osys.jaxrsodata.filter;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.Fetch;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
@@ -106,7 +106,7 @@ public class DefaultJPAFilterDao<T> {
 	/**
 	 * Set JPA root
 	 * 
-	 * @param root
+	 * @param root The Root entity
 	 */
 	public void setRoot(Root<T> root) {
 		this.root = root;
@@ -115,7 +115,7 @@ public class DefaultJPAFilterDao<T> {
 	/**
 	 * Set CriteriaBuilder
 	 * 
-	 * @param cb
+	 * @param cb the Criteria Builder
 	 */
 	public void setCb(CriteriaBuilder cb) {
 		this.cb = cb;
@@ -124,8 +124,8 @@ public class DefaultJPAFilterDao<T> {
 	/**
 	 * Setup this class by passing the context
 	 * 
-	 * @param context
-	 * @throws NotImplementedException
+	 * @param context The ANTLR Context
+	 * @throws NotImplementedException throw this exception is not yet implemented the code to support the datatype of the filter
 	 */
 	public void setup(ExprContext context) throws NotImplementedException {
 		if (context.children != null) {
@@ -235,20 +235,25 @@ public class DefaultJPAFilterDao<T> {
 		return null;
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private Path<Object> getPathFromField(String field) {
 		String[] fieldname = field.split("/");
 		Path<Object> path = null;
 		for (int idx = 0; idx < fieldname.length; idx++) {
 
+			String attributeName = fieldname[idx];
+
 			if (path != null)
-				path = path.get(fieldname[idx]);
+				path = path.get(attributeName);
 			else
-				path = root.get(fieldname[idx]);
+				path = root.get(attributeName);
 
 			if (path.getJavaType().isAssignableFrom(Set.class)) {
-				Fetch<Object, Object> fetch = root.fetch(fieldname[idx]);
-				path = ((Join) fetch).get(fieldname[++idx]);
+
+				Optional<Join<T, ?>> opJoin = root.getJoins().stream().filter(p -> p.getAttribute().getName().equals(attributeName))
+						.findFirst();
+				Join<T, ?> join = opJoin.orElseGet(() -> root.join(attributeName));
+				path = join.get(fieldname[++idx]);
+
 			}
 
 		}

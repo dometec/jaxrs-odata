@@ -36,7 +36,7 @@
 	<test_entity
 		id="3"
 		string_type_1="app2"
-		string_type_2="DISTRIBUTION_NAME"
+		string_type_2="DISTRIBUTION_NAME_UP"
 		string_type_3="string1"
 		string_type_4="token2"
         boolfield="false"
@@ -56,12 +56,6 @@
       version="1"
     />
     <test_entity_sub
-      id="2"
-      parent="2"
-      string_type_1="app1"
-      version="1"
-    />
-    <test_entity_sub
       id="3"
       parent="1"
       string_type_1="app2"
@@ -71,6 +65,13 @@
       id="4"
       parent="1"
       string_type_1="app3"
+      version="1"
+    />
+    
+    <test_entity_sub
+      id="2"
+      parent="2"
+      string_type_1="app1"
       version="1"
     />
     

@@ -69,33 +69,33 @@ public class DefaultJPAFilterDaoTest extends HSQLDBInitialize {
 
 		Assert.assertEquals(expSize, result.size());
 	}
-	
+
 	@Test
 	public void testConditionOnSubEntityCollection2() throws NotImplementedException {
 		// Filter query.
 		final String filter = "subentities/stringType1 eq 'app2'";
-		
+
 		// Expected result.
 		final int expSize = 1;
-		
+
 		List<TestEntity> result = getFilteredResults(filter);
-		
+
 		Assert.assertEquals(expSize, result.size());
 	}
-	
+
 	@Test
 	public void testConditionOnSubEntityCollection3() throws NotImplementedException {
 		// Filter query.
 		final String filter = "subentities/stringType1 eq 'app7'";
-		
+
 		// Expected result.
 		final int expSize = 0;
-		
+
 		List<TestEntity> result = getFilteredResults(filter);
-		
+
 		Assert.assertEquals(expSize, result.size());
 	}
-	
+
 	@Test
 	public void getFieldANDStrings() throws NotImplementedException {
 		// Filter query.
@@ -183,7 +183,7 @@ public class DefaultJPAFilterDaoTest extends HSQLDBInitialize {
 		Assert.assertEquals(expSize, result.size());
 		Assert.assertEquals(exp1Id, result.get(0).getId());
 	}
-	
+
 	@Test
 	public void getFieldNOTCONTAINSInteger() throws NotImplementedException {
 		// Filter query.
@@ -214,21 +214,6 @@ public class DefaultJPAFilterDaoTest extends HSQLDBInitialize {
 		Assert.assertEquals(expSize, result.size());
 		Assert.assertEquals(exp1Id, result.get(0).getId());
 		Assert.assertEquals(exp2Id, result.get(1).getId());
-	}
-
-	@Test
-	public void getFieldNOTCONTAINSLocalDateTime() throws NotImplementedException {
-		// Filter query.
-		final String filter = "not contains(localDateTimeType, '13')";
-
-		// Expected result.
-		final int expSize = 1;
-		final Long exp2Id = 2L;
-
-		List<TestEntity> result = getFilteredResults(filter);
-
-		Assert.assertEquals(expSize, result.size());
-		Assert.assertEquals(exp2Id, result.get(0).getId());
 	}
 
 	/*
@@ -906,14 +891,13 @@ public class DefaultJPAFilterDaoTest extends HSQLDBInitialize {
 	@Test
 	public void getFieldToupperEQString() throws NotImplementedException {
 
-		final String filter = "toupper(stringType2) eq 'DISTRIBUTION_NAME'";
+		final String filter = "toupper(stringType2) eq 'distribution_name'";
 
 		List<TestEntity> result = getFilteredResults(filter);
 
-		Assert.assertEquals(3, result.size());
+		Assert.assertEquals(2, result.size());
 		Assert.assertEquals("distribution_name", result.get(0).getStringType2());
 		Assert.assertEquals("distribution_name", result.get(1).getStringType2());
-		Assert.assertEquals("DISTRIBUTION_NAME", result.get(2).getStringType2());
 	}
 
 	/*
@@ -922,14 +906,12 @@ public class DefaultJPAFilterDaoTest extends HSQLDBInitialize {
 	@Test
 	public void getFieldTolowerEQString() throws NotImplementedException {
 
-		final String filter = "tolower(stringType2) eq 'distribution_name'";
+		final String filter = "tolower(stringType2) eq 'distribution_name_up'";
 
 		List<TestEntity> result = getFilteredResults(filter);
 
-		Assert.assertEquals(3, result.size());
-		Assert.assertEquals("distribution_name", result.get(0).getStringType2());
-		Assert.assertEquals("distribution_name", result.get(1).getStringType2());
-		Assert.assertEquals("DISTRIBUTION_NAME", result.get(2).getStringType2());
+		Assert.assertEquals(1, result.size());
+		Assert.assertEquals("DISTRIBUTION_NAME_UP", result.get(0).getStringType2());
 	}
 
 	/*
