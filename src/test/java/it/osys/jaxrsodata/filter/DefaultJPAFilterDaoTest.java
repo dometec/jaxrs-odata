@@ -891,7 +891,7 @@ public class DefaultJPAFilterDaoTest extends HSQLDBInitialize {
 	@Test
 	public void getFieldToupperEQString() throws NotImplementedException {
 
-		final String filter = "toupper(stringType2) eq 'distribution_name'";
+		final String filter = "toupper(stringType2) eq 'DISTRIBUTION_NAME'";
 
 		List<TestEntity> result = getFilteredResults(filter);
 
