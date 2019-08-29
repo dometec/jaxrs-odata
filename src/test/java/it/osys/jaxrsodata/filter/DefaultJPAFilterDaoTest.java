@@ -58,6 +58,45 @@ public class DefaultJPAFilterDaoTest extends HSQLDBInitialize {
 	}
 
 	@Test
+	public void testConditionOnSubEntityCollection1() throws NotImplementedException {
+		// Filter query.
+		final String filter = "subentities/stringType1 eq 'app1'";
+
+		// Expected result.
+		final int expSize = 2;
+
+		List<TestEntity> result = getFilteredResults(filter);
+
+		Assert.assertEquals(expSize, result.size());
+	}
+	
+	@Test
+	public void testConditionOnSubEntityCollection2() throws NotImplementedException {
+		// Filter query.
+		final String filter = "subentities/stringType1 eq 'app2'";
+		
+		// Expected result.
+		final int expSize = 1;
+		
+		List<TestEntity> result = getFilteredResults(filter);
+		
+		Assert.assertEquals(expSize, result.size());
+	}
+	
+	@Test
+	public void testConditionOnSubEntityCollection3() throws NotImplementedException {
+		// Filter query.
+		final String filter = "subentities/stringType1 eq 'app7'";
+		
+		// Expected result.
+		final int expSize = 0;
+		
+		List<TestEntity> result = getFilteredResults(filter);
+		
+		Assert.assertEquals(expSize, result.size());
+	}
+	
+	@Test
 	public void getFieldANDStrings() throws NotImplementedException {
 		// Filter query.
 		final String filter = "stringType1 eq 'app1' and stringType4 eq 'token'";

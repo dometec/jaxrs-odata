@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dataset>
+
 	<test_entity
 		id="1"
 		string_type_1="app1"
@@ -47,4 +48,30 @@
         city="citta3"
 		version="3"
 	/>
+  
+    <test_entity_sub
+      id="1"
+      parent="1"
+      string_type_1="app1"
+      version="1"
+    />
+    <test_entity_sub
+      id="2"
+      parent="2"
+      string_type_1="app1"
+      version="1"
+    />
+    <test_entity_sub
+      id="3"
+      parent="1"
+      string_type_1="app2"
+      version="1"
+    />
+    <test_entity_sub
+      id="4"
+      parent="1"
+      string_type_1="app3"
+      version="1"
+    />
+    
 </dataset>

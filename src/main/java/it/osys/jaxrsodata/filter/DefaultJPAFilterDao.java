@@ -3,8 +3,11 @@ package it.osys.jaxrsodata.filter;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Set;
 
 import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.Fetch;
+import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
@@ -93,6 +96,9 @@ public class DefaultJPAFilterDao<T> {
 
 		if (javaType.isAssignableFrom(Boolean.class) || javaType.isAssignableFrom(boolean.class))
 			return (F) Boolean.valueOf(value);
+
+		if (javaType.isAssignableFrom(Set.class))
+			return null; // (F) Boolean.valueOf(value);
 
 		throw new NotImplementedException("Field type " + javaType.getName() + " not implemented yet!");
 	}
@@ -229,14 +235,24 @@ public class DefaultJPAFilterDao<T> {
 		return null;
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private Path<Object> getPathFromField(String field) {
 		String[] fieldname = field.split("/");
 		Path<Object> path = null;
-		for (int idx = 0; idx < fieldname.length; idx++)
+		for (int idx = 0; idx < fieldname.length; idx++) {
+
 			if (path != null)
 				path = path.get(fieldname[idx]);
 			else
 				path = root.get(fieldname[idx]);
+
+			if (path.getJavaType().isAssignableFrom(Set.class)) {
+				Fetch<Object, Object> fetch = root.fetch(fieldname[idx]);
+				path = ((Join) fetch).get(fieldname[++idx]);
+			}
+
+		}
+
 		return path;
 	}
 

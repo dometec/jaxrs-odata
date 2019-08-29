@@ -4,12 +4,14 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
@@ -41,7 +43,7 @@ public class TestEntity implements InternalDateEnable, Serializable {
 
 	@Column(name = "string_type_4")
 	private String stringType4;
-	
+
 	@Column(name = "boolfield")
 	private boolean boolfield;
 
@@ -58,6 +60,9 @@ public class TestEntity implements InternalDateEnable, Serializable {
 	private Float notImplementedType;
 
 	private TestEmbeddedEntity address;
+
+	@OneToMany(mappedBy = "parent")
+	private Set<TestEntitySub> subentities;
 
 	@Version
 	private int version;
@@ -152,6 +157,14 @@ public class TestEntity implements InternalDateEnable, Serializable {
 
 	public void setAddress(TestEmbeddedEntity address) {
 		this.address = address;
+	}
+
+	public Set<TestEntitySub> getSubentities() {
+		return subentities;
+	}
+
+	public void setSubentities(Set<TestEntitySub> subentities) {
+		this.subentities = subentities;
 	}
 
 	public int getVersion() {
