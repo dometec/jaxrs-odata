@@ -165,6 +165,24 @@ public class DefaultJPAFilterDaoTest extends HSQLDBInitialize {
 		Assert.assertEquals(expSize, result.size());
 		Assert.assertEquals(exp1Id, result.get(0).getId());
 	}
+	
+	/*
+	 * Test NOTCONTAINS
+	 */
+	@Test
+	public void getFieldNOTCONTAINSString1() throws NotImplementedException {
+		// Filter query.
+		final String filter = "not (contains(stringType4, '2'))";
+		
+		// Expected result.
+		final int expSize = 2;
+		final Long exp1Id = 1L;
+		
+		List<TestEntity> result = getFilteredResults(filter);
+		
+		Assert.assertEquals(expSize, result.size());
+		Assert.assertEquals(exp1Id, result.get(0).getId());
+	}
 
 	/*
 	 * Test on Boolean field
@@ -919,7 +937,7 @@ public class DefaultJPAFilterDaoTest extends HSQLDBInitialize {
 	 */
 	@SuppressWarnings("unused")
 	@Test
-	public void ThrowExceptionWhenNotImplementedType() {
+	public void throwExceptionWhenNotImplementedType() {
 		// Orderby query.
 		final String filter = "notImplementedType eq 'strangeType'";
 
@@ -935,7 +953,7 @@ public class DefaultJPAFilterDaoTest extends HSQLDBInitialize {
 	 */
 	@SuppressWarnings("unused")
 	@Test
-	public void ThrowExceptionWhenFilterNull() {
+	public void throwExceptionWhenFilterNull() {
 		// Orderby query.
 		final String filter = "";
 

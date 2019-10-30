@@ -33,7 +33,7 @@ public class DefaultJPAFilterVisitor<T> implements JPAFilterVisitor<T> {
 			return cb.or((Predicate) visit(context.expr(0)), (Predicate) visit(context.expr(1)));
 
 		if (context.NOT() != null)
-			return visit(context.expr(0));
+			return cb.not((Predicate) visit(context.expr(0)));
 
 		if (context.start.getType() == ODataFilterParser.BR_OPEN)
 			return visit(context.expr(0));

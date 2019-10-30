@@ -72,7 +72,7 @@ public class DefaultJPAOrderByVisitorTest extends HSQLDBInitialize {
 	 */
 	@SuppressWarnings("unused")
 	@Test
-	public void ThrowExceptionWhenOrderByNull() {
+	public void throwExceptionWhenOrderByNull() {
 		// Orderby query.
 		final String orderby = "";
 
