@@ -166,8 +166,6 @@ public class DefaultJPAFilterDao<T> {
 			}
 
 			if (context.CONTAINS() != null) {
-				if (context.parent != null && context.getParent().getChild(0).getText().equals("not"))
-					return cb.notLike(path.as(String.class), "%" + this.value.toString() + "%");
 				return cb.like(path.as(String.class), "%" + this.value.toString() + "%");
 			}
 
