@@ -4,13 +4,17 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Version;
@@ -59,6 +63,11 @@ public class TestEntity implements InternalDateEnable, Serializable {
 	@Column(name = "not_implemented_type")
 	private Float notImplementedType;
 
+	@ElementCollection
+	@CollectionTable(name = "test_entity_owners", joinColumns = @JoinColumn(name = "id"))
+	@Column(name = "owner")
+	private Set<Integer> ownerids;
+
 	private TestEmbeddedEntity address;
 
 	@OneToMany(mappedBy = "parent")
@@ -68,6 +77,7 @@ public class TestEntity implements InternalDateEnable, Serializable {
 	private int version;
 
 	public TestEntity() {
+		this.ownerids = new HashSet<Integer>();
 		this.address = new TestEmbeddedEntity();
 	}
 
@@ -206,6 +216,14 @@ public class TestEntity implements InternalDateEnable, Serializable {
 				+ ", stringType2=" + stringType2 + ", stringType3=" + stringType3 + ", stringType4=" + stringType4 + ", localTimeType="
 				+ localTimeType + ", localDateType=" + localDateType + ", localDateTimeType=" + localDateTimeType + ", version=" + version
 				+ "]";
+	}
+
+	public Set<Integer> getOwnerids() {
+		return ownerids;
+	}
+
+	public void setOwnerids(Set<Integer> ownerids) {
+		this.ownerids = ownerids;
 	}
 
 }

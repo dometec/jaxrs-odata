@@ -21,10 +21,10 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 
-import it.osys.jaxrsodata.Odata;
+import it.osys.jaxrsodata.OData;
 import it.osys.jaxrsodata.entity.TestEntity;
 
-public class HSQLDBInitialize extends Odata<TestEntity> {
+public class HSQLDBInitialize extends OData<TestEntity> {
 
 	protected static EntityManagerFactory emf;
 	protected static EntityManager em;
@@ -45,6 +45,10 @@ public class HSQLDBInitialize extends Odata<TestEntity> {
 		InputStream dataSet = Thread.currentThread().getContextClassLoader().getResourceAsStream("test-data.xml");
 		dataset = flatXmlDataSetBuilder.build(dataSet);
 
+	}
+
+	public HSQLDBInitialize() {
+		super(TestEntity.class);
 	}
 
 	/**

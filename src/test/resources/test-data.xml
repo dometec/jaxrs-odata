@@ -17,6 +17,7 @@
         city="citta1"
 		version="1"
 	/>
+  
 	<test_entity
 		id="2"
 		string_type_1="app2"
@@ -33,6 +34,7 @@
         city="citta2"
 		version="2"
 	/>
+  
 	<test_entity
 		id="3"
 		string_type_1="app2"
@@ -48,6 +50,18 @@
         city="citta3"
 		version="3"
 	/>
+  
+    <test_entity_owners
+      id="1"
+      owner="1"/>
+      
+    <test_entity_owners
+      id="1"
+      owner="3"/>
+ 
+    <test_entity_owners
+      id="3"
+      owner="3"/>
   
     <test_entity_sub
       id="1"

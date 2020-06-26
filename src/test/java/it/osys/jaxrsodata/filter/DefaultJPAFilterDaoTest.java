@@ -902,6 +902,20 @@ public class DefaultJPAFilterDaoTest extends HSQLDBInitialize {
 		Assert.assertEquals(3, result.size());
 		Assert.assertEquals(expId, result.get(0).getId());
 	}
+	
+	@Test
+	public void filterElementCollection1() throws NotImplementedException {
+		// Filter query.
+		final String filter = "ownerids has 3";
+		
+		// Expected result.
+		final Long expId = 1L;
+		
+		List<TestEntity> result = getFilteredResults(filter);
+		
+		Assert.assertEquals(2, result.size());
+		Assert.assertEquals(expId, result.get(0).getId());
+	}
 
 	/*
 	 * Test TOUPPER

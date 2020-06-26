@@ -27,7 +27,7 @@ public class DefaultJPAFilterDao<T> {
 
 	private Integer indexField = 0;
 	private Integer indexValue = 2;
-	private Boolean isValueFromFunction = false;
+	private Boolean isValueFromCaseFunction = false;
 	private Boolean isValueFromContainFunction = false;
 
 	/**
@@ -41,7 +41,7 @@ public class DefaultJPAFilterDao<T> {
 		this.field = this.context.getChild(indexField).getText();
 		this.value = this.context.getChild(indexValue).getText().replace("'", "");
 
-		if (isValueFromFunction) {
+		if (isValueFromCaseFunction) {
 			this.field = this.context.getChild(indexField + 2).getText();
 			this.value = this.context.getChild(indexValue + 3).getText().replace("'", "");
 		} else if (isValueFromContainFunction) {
@@ -50,7 +50,7 @@ public class DefaultJPAFilterDao<T> {
 			// [contains, (, device_type, ,, '7', )]
 		} else {
 			Path<Object> path = getPathFromField(this.field.toString());
-			this.value = convValueToFieldType(path.getJavaType(), this.value.toString().replace("'", ""));
+			this.value = convValueToFieldType(path, this.value.toString().replace("'", ""));
 		}
 	}
 
@@ -65,40 +65,44 @@ public class DefaultJPAFilterDao<T> {
 	 * @throws NotImplementedException
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private static <F extends Object> F convValueToFieldType(Class<F> javaType, String value) throws NotImplementedException {
+	private static Object convValueToFieldType(Path<Object> path, String value) throws NotImplementedException {
 
 		// If i just want to check if the db field is empty just skip value
 		// casting.
 		if (value.equals("null"))
 			return null;
 
+		Class<? extends Object> javaType = path.getJavaType();
+
 		// Cast value accorting to db field type.
 		if (javaType.isAssignableFrom(String.class))
-			return (F) value;
+			return value;
 
 		if (javaType.isEnum())
-			return (F) Enum.valueOf((Class<Enum>) javaType, value);
+			return Enum.valueOf((Class<Enum>) javaType, value);
 
 		if (javaType.isAssignableFrom(Integer.class) || javaType.isAssignableFrom(int.class))
-			return (F) Integer.valueOf(value);
+			return Integer.valueOf(value);
 
 		if (javaType.isAssignableFrom(Long.class))
-			return (F) Long.valueOf(value);
+			return Long.valueOf(value);
 
 		if (javaType.isAssignableFrom(LocalDateTime.class))
-			return (F) LocalDateTime.parse(value.split("\\.")[0]);
+			return LocalDateTime.parse(value.split("\\.")[0]);
 
 		if (javaType.isAssignableFrom(LocalTime.class))
-			return (F) LocalTime.parse(value);
+			return LocalTime.parse(value);
 
 		if (javaType.isAssignableFrom(LocalDate.class))
-			return (F) LocalDate.parse(value);
+			return LocalDate.parse(value);
 
 		if (javaType.isAssignableFrom(Boolean.class) || javaType.isAssignableFrom(boolean.class))
-			return (F) Boolean.valueOf(value);
+			return Boolean.valueOf(value);
 
-		if (javaType.isAssignableFrom(Set.class))
-			return null; // (F) Boolean.valueOf(value);
+		if (javaType.isAssignableFrom(Set.class)) {
+			// TODO, convert to Set's type?
+			return value;
+		}
 
 		throw new NotImplementedException("Field type " + javaType.getName() + " not implemented yet!");
 	}
@@ -134,10 +138,10 @@ public class DefaultJPAFilterDao<T> {
 			// If the first element of the filter is a function (ex.
 			// "tolower(value)") we need to shift the index of value and field
 			// accordingly.
-			if (this.context.getChild(indexField).getText().equals("tolower")
-					|| this.context.getChild(indexField).getText().equals("toupper")) {
-				isValueFromFunction = true;
-			} else if (this.context.getChild(indexField).getText().equals("contains")) {
+			String iField = this.context.getChild(indexField).getText();
+			if (iField.equals("tolower") || iField.equals("toupper")) {
+				isValueFromCaseFunction = true;
+			} else if (iField.equals("contains")) {
 				isValueFromContainFunction = true;
 			}
 
@@ -180,6 +184,18 @@ public class DefaultJPAFilterDao<T> {
 
 			if (this.context.NE() != null)
 				return cb.notEqual(path, this.value);
+
+			if (this.context.HAS() != null) {
+				if (path.getJavaType() == LocalDateTime.class)
+					return cb.isMember(LocalDateTime.parse(this.value.toString()), path);
+				if (path.getJavaType() == LocalTime.class)
+					return cb.isMember(LocalTime.parse(this.value.toString()), path);
+				if (path.getJavaType() == LocalDate.class)
+					return cb.isMember(LocalDate.parse(this.value.toString()), path);
+				if (path.getJavaType() == Long.class)
+					return cb.isMember(Long.parseLong(this.value.toString()), path);
+				return cb.isMember(Integer.parseInt(this.value.toString()), path);
+			}
 
 			if (this.context.GT() != null) {
 				if (path.getJavaType() == LocalDateTime.class)
@@ -245,13 +261,16 @@ public class DefaultJPAFilterDao<T> {
 			else
 				path = root.get(attributeName);
 
-			if (path.getJavaType().isAssignableFrom(Set.class)) {
+			if ((fieldname.length - 1) > idx) {
 
-				Optional<Join<T, ?>> opJoin = root.getJoins().stream().filter(p -> p.getAttribute().getName().equals(attributeName))
-						.findFirst();
-				Join<T, ?> join = opJoin.orElseGet(() -> root.join(attributeName));
-				path = join.get(fieldname[++idx]);
+				if (path.getJavaType().isAssignableFrom(Set.class)) {
 
+					Optional<Join<T, ?>> opJoin = root.getJoins().stream().filter(p -> p.getAttribute().getName().equals(attributeName))
+							.findFirst();
+					Join<T, ?> join = opJoin.orElseGet(() -> root.join(attributeName));
+					path = join.get(fieldname[++idx]);
+
+				}
 			}
 
 		}

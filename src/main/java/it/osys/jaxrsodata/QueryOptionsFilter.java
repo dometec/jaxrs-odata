@@ -2,27 +2,27 @@ package it.osys.jaxrsodata;
 
 import java.io.IOException;
 
-import javax.annotation.Priority;
-import javax.ws.rs.Priorities;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
-import javax.ws.rs.container.PreMatching;
 import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.ext.Provider;
+import javax.ws.rs.core.UriInfo;
 
 import it.osys.jaxrsodata.queryoptions.QueryOptions;
 
-@Provider
-@PreMatching
-@Priority(Priorities.HEADER_DECORATOR)
 public class QueryOptionsFilter implements ContainerRequestFilter {
 
 	public static final ThreadLocal<QueryOptions> threadQueryOption = new ThreadLocal<QueryOptions>();
 
 	@Override
 	public void filter(ContainerRequestContext requestContext) throws IOException {
+		threadQueryOption.set(from(requestContext.getUriInfo()));
+	}
 
-		MultivaluedMap<String, String> queryParameters = requestContext.getUriInfo().getQueryParameters();
+	public static QueryOptions from(UriInfo info) {
+		return from(info.getQueryParameters());
+	}
+
+	public static QueryOptions from(MultivaluedMap<String, String> queryParameters) {
 
 		QueryOptions queryOptions = new QueryOptions();
 		if (queryParameters.containsKey("$top") && !queryParameters.getFirst("$top").isEmpty())
@@ -46,7 +46,7 @@ public class QueryOptionsFilter implements ContainerRequestFilter {
 		if (queryParameters.containsKey("$filter") && !queryParameters.getFirst("$filter").isEmpty())
 			queryOptions.filter = queryParameters.getFirst("$filter");
 
-		threadQueryOption.set(queryOptions);
+		return queryOptions;
 	}
 
 }

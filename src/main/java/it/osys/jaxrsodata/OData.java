@@ -1,11 +1,8 @@
 package it.osys.jaxrsodata;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.List;
 
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -29,28 +26,16 @@ import it.osys.jaxrsodata.queryoptions.QueryOptions;
  * QueryOption
  *
  * @param <T>
- *            the generic type
  */
-public class Odata<T> {
+public class OData<T> {
 
-	public Odata() {
-		super();
-	}
-
-	/** EntityManager. */
-	@PersistenceContext
 	private EntityManager em;
 
-	/** Entity class. */
 	private Class<T> entityClass;
 
-	/**
-	 * Gets the entity manager.
-	 *
-	 * @return the entity manager
-	 */
-	public EntityManager getEntityManager() {
-		return em;
+	/** I need the class since I can't rely on to Reflection to get che Generic Type **/
+	public OData(Class<T> clazz) {
+		entityClass = clazz;
 	}
 
 	/**
@@ -59,40 +44,9 @@ public class Odata<T> {
 	 * @param em
 	 *            the new entity manager
 	 */
+	
 	public void setEntityManager(EntityManager em) {
 		this.em = em;
-	}
-
-	/**
-	 * Gets the entity class.
-	 *
-	 * @return the entity class
-	 */
-	public Class<T> getEntityClass() {
-		if (entityClass == null)
-			entityClass = getRuntimeEntityClass();
-		return entityClass;
-	}
-
-	/**
-	 * Gets the runtime entity class.
-	 *
-	 * @return the runtime entity class
-	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private Class<T> getRuntimeEntityClass() {
-
-		ParameterizedType parameterizedType = null;
-		Type genericSuperclass = getClass().getGenericSuperclass();
-
-		if (genericSuperclass instanceof ParameterizedType)
-			parameterizedType = (ParameterizedType) genericSuperclass;
-		else {
-			Class class1 = (Class) genericSuperclass;
-			parameterizedType = (ParameterizedType) class1.getGenericSuperclass();
-		}
-
-		return (Class<T>) parameterizedType.getActualTypeArguments()[0];
 	}
 
 	/**
@@ -107,9 +61,9 @@ public class Odata<T> {
 	 *             the not implemented exception
 	 */
 	public List<T> getAll(JPAFilterVisitor<T> visitor, QueryOptions queryOptions) throws NotImplementedException {
-		CriteriaBuilder cb = getEntityManager().getCriteriaBuilder();
-		CriteriaQuery<T> query = cb.createQuery(getEntityClass());
-		Root<T> root = query.from(getEntityClass());
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<T> query = cb.createQuery(entityClass);
+		Root<T> root = query.from(entityClass);
 
 		visitor.setCb(cb);
 		visitor.setRoot(root);
@@ -123,7 +77,7 @@ public class Odata<T> {
 		if (queryOptions.orderby != null && !queryOptions.orderby.isEmpty())
 			query.orderBy(createOrderPredicate(visitorOrderBy, queryOptions.orderby));
 
-		TypedQuery<T> namedQuery = getEntityManager().createQuery(query);
+		TypedQuery<T> namedQuery = em.createQuery(query);
 		namedQuery.setFirstResult(queryOptions.skip);
 		namedQuery.setMaxResults(queryOptions.top);
 
@@ -142,9 +96,9 @@ public class Odata<T> {
 	 *             the not implemented exception
 	 */
 	public long countAll(JPAFilterVisitor<T> visitor, QueryOptions queryOptions) throws NotImplementedException {
-		CriteriaBuilder cb = getEntityManager().getCriteriaBuilder();
+		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<Long> query = cb.createQuery(Long.class);
-		Root<T> root = query.from(getEntityClass());
+		Root<T> root = query.from(entityClass);
 
 		query.select(cb.count(root));
 
@@ -154,7 +108,7 @@ public class Odata<T> {
 		if (queryOptions.filter != null)
 			query.where(createWherePredicate(visitor, queryOptions.filter));
 
-		TypedQuery<Long> namedQuery = getEntityManager().createQuery(query);
+		TypedQuery<Long> namedQuery = em.createQuery(query);
 
 		return namedQuery.getSingleResult();
 	}
