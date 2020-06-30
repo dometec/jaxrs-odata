@@ -916,6 +916,17 @@ public class DefaultJPAFilterDaoTest extends HSQLDBInitialize {
 		Assert.assertEquals(2, result.size());
 		Assert.assertEquals(expId, result.get(0).getId());
 	}
+	
+	@Test
+	public void getFieldToupperInString() throws NotImplementedException {
+		final String filter = "address/city in ('citta1', 'citta2')";
+
+		List<TestEntity> result = getFilteredResults(filter);
+
+		Assert.assertEquals(2, result.size());
+		Assert.assertEquals("distribution_name", result.get(0).getStringType2());
+		Assert.assertEquals("distribution_name", result.get(1).getStringType2());
+	}
 
 	/*
 	 * Test TOUPPER

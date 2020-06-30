@@ -7,6 +7,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaBuilder.In;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
@@ -185,6 +186,20 @@ public class DefaultJPAFilterDao<T> {
 			if (this.context.NE() != null)
 				return cb.notEqual(path, this.value);
 
+			if (this.context.IN() != null) {
+				In in = cb.in(path);
+				if (path.getJavaType() == Long.class)
+					this.context.NUMBER().forEach(s -> {
+						in.value(s.getText());
+					});
+
+				if (path.getJavaType() == String.class)
+					this.context.STRINGLITERAL().forEach(s -> {
+						in.value(s.getText().replace("'", ""));
+					});
+				return in;
+			}
+
 			if (this.context.HAS() != null) {
 				if (path.getJavaType() == LocalDateTime.class)
 					return cb.isMember(LocalDateTime.parse(this.value.toString()), path);
@@ -247,6 +262,7 @@ public class DefaultJPAFilterDao<T> {
 		}
 
 		return null;
+
 	}
 
 	private Path<Object> getPathFromField(String field) {
