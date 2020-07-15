@@ -165,7 +165,7 @@ public class DefaultJPAFilterDaoTest extends HSQLDBInitialize {
 		Assert.assertEquals(expSize, result.size());
 		Assert.assertEquals(exp1Id, result.get(0).getId());
 	}
-	
+
 	/*
 	 * Test NOTCONTAINS
 	 */
@@ -173,13 +173,13 @@ public class DefaultJPAFilterDaoTest extends HSQLDBInitialize {
 	public void getFieldNOTCONTAINSString1() throws NotImplementedException {
 		// Filter query.
 		final String filter = "not (contains(stringType4, '2'))";
-		
+
 		// Expected result.
 		final int expSize = 2;
 		final Long exp1Id = 1L;
-		
+
 		List<TestEntity> result = getFilteredResults(filter);
-		
+
 		Assert.assertEquals(expSize, result.size());
 		Assert.assertEquals(exp1Id, result.get(0).getId());
 	}
@@ -902,21 +902,21 @@ public class DefaultJPAFilterDaoTest extends HSQLDBInitialize {
 		Assert.assertEquals(3, result.size());
 		Assert.assertEquals(expId, result.get(0).getId());
 	}
-	
+
 	@Test
 	public void filterElementCollection1() throws NotImplementedException {
 		// Filter query.
 		final String filter = "ownerids has 3";
-		
+
 		// Expected result.
 		final Long expId = 1L;
-		
+
 		List<TestEntity> result = getFilteredResults(filter);
-		
+
 		Assert.assertEquals(2, result.size());
 		Assert.assertEquals(expId, result.get(0).getId());
 	}
-	
+
 	@Test
 	public void getFieldToupperInString() throws NotImplementedException {
 		final String filter = "address/city in ('citta1', 'citta2')";
@@ -926,6 +926,25 @@ public class DefaultJPAFilterDaoTest extends HSQLDBInitialize {
 		Assert.assertEquals(2, result.size());
 		Assert.assertEquals("distribution_name", result.get(0).getStringType2());
 		Assert.assertEquals("distribution_name", result.get(1).getStringType2());
+	}
+
+	@Test
+	public void getFieldToupperInAndHasString() throws NotImplementedException {
+		final String filter = "address/city in ('citta1', 'citta2') and ownerids has 3";
+
+		List<TestEntity> result = getFilteredResults(filter);
+
+		Assert.assertEquals(1, result.size());
+		Assert.assertEquals("distribution_name", result.get(0).getStringType2());
+	}
+	
+	@Test
+	public void getFieldToupperInOrHasString() throws NotImplementedException {
+		final String filter = "address/city in ('citta1', 'citta2') or ownerids has 3";
+		
+		List<TestEntity> result = getFilteredResults(filter);
+		
+		Assert.assertEquals(3, result.size());
 	}
 
 	/*
