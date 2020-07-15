@@ -918,7 +918,7 @@ public class DefaultJPAFilterDaoTest extends HSQLDBInitialize {
 	}
 
 	@Test
-	public void getFieldToupperInString() throws NotImplementedException {
+	public void testInString() throws NotImplementedException {
 		final String filter = "address/city in ('citta1', 'citta2')";
 
 		List<TestEntity> result = getFilteredResults(filter);
@@ -929,7 +929,7 @@ public class DefaultJPAFilterDaoTest extends HSQLDBInitialize {
 	}
 
 	@Test
-	public void getFieldToupperInAndHasString() throws NotImplementedException {
+	public void testInAndHasString() throws NotImplementedException {
 		final String filter = "address/city in ('citta1', 'citta2') and ownerids has 3";
 
 		List<TestEntity> result = getFilteredResults(filter);
@@ -939,8 +939,17 @@ public class DefaultJPAFilterDaoTest extends HSQLDBInitialize {
 	}
 	
 	@Test
-	public void getFieldToupperInOrHasString() throws NotImplementedException {
+	public void testInOrHasString() throws NotImplementedException {
 		final String filter = "address/city in ('citta1', 'citta2') or ownerids has 3";
+		
+		List<TestEntity> result = getFilteredResults(filter);
+		
+		Assert.assertEquals(3, result.size());
+	}
+	
+	@Test
+	public void testInOrHasInteger() throws NotImplementedException {
+		final String filter = "id in (1, 2) or ownerids has 3";
 		
 		List<TestEntity> result = getFilteredResults(filter);
 		

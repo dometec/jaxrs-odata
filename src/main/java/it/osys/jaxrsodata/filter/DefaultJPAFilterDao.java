@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaBuilder.In;
@@ -26,32 +27,73 @@ public class DefaultJPAFilterDao<T> {
 	private Object value;
 	private Object field;
 
-	private Integer indexField = 0;
-	private Integer indexValue = 2;
-	private Boolean isValueFromCaseFunction = false;
-	private Boolean isValueFromContainFunction = false;
+	/**
+	 * Set JPA root
+	 * 
+	 * @param root The Root entity
+	 */
+	public void setRoot(Root<T> root) {
+		this.root = root;
+	}
 
 	/**
-	 * Gather field and value from context and set those according to the index
-	 * inside the context.
+	 * Set CriteriaBuilder
 	 * 
-	 * @throws NotImplementedException
+	 * @param cb the Criteria Builder
 	 */
-	private void setParameters() throws NotImplementedException {
+	public void setCb(CriteriaBuilder cb) {
+		this.cb = cb;
+	}
 
-		this.field = this.context.getChild(indexField).getText();
-		this.value = this.context.getChild(indexValue).getText().replace("'", "");
+	/**
+	 * Setup this class by passing the context
+	 * 
+	 * @param context The ANTLR Context
+	 * @throws NotImplementedException throw this exception is not yet implemented the code to support the datatype of the filter
+	 */
+	public void setup(ExprContext context) throws NotImplementedException {
 
-		if (isValueFromCaseFunction) {
-			this.field = this.context.getChild(indexField + 2).getText();
-			this.value = this.context.getChild(indexValue + 3).getText().replace("'", "");
-		} else if (isValueFromContainFunction) {
-			this.field = this.context.getChild(indexField + 2).getText();
-			this.value = this.context.getChild(indexValue + 2).getText().replace("'", "");
-			// [contains, (, device_type, ,, '7', )]
-		} else {
-			Path<Object> path = getPathFromField(this.field.toString());
-			this.value = convValueToFieldType(path, this.value.toString().replace("'", ""));
+		if (context.children != null) {
+
+			this.context = context;
+
+			Integer indexField = 0;
+			Integer indexValue = 2;
+
+			// If the first element of the filter is a function (ex.
+			// "tolower(value)") we need to shift the index of value and field
+			// accordingly.
+
+			if (this.context.TOLOWER() != null || this.context.TOUPPER() != null) {
+
+				this.field = this.context.getChild(indexField + 2).getText();
+				this.value = this.context.getChild(indexValue + 3).getText().replace("'", "");
+
+			} else if (this.context.CONTAINS() != null) {
+
+				this.field = this.context.getChild(indexField + 2).getText();
+				this.value = this.context.getChild(indexValue + 2).getText().replace("'", "");
+
+			} else if (this.context.IN() != null) {
+
+				this.field = this.context.FIELD().getText();
+
+				if (this.context.STRINGLITERAL().size() > 0)
+					this.value = this.context.STRINGLITERAL().stream().map(e -> e.getText().replace("'", "")).collect(Collectors.toSet());
+
+				if (this.context.NUMBER().size() > 0)
+					this.value = this.context.NUMBER().stream().map(e -> Long.parseLong(e.getText())).collect(Collectors.toSet());
+
+			} else {
+
+				this.field = this.context.getChild(indexField).getText();
+				this.value = this.context.getChild(indexValue).getText().replace("'", "");
+
+				Path<Object> path = getPathFromField(this.field.toString());
+				this.value = convValueToFieldType(path, this.value.toString().replace("'", ""));
+
+			}
+
 		}
 	}
 
@@ -109,48 +151,6 @@ public class DefaultJPAFilterDao<T> {
 	}
 
 	/**
-	 * Set JPA root
-	 * 
-	 * @param root The Root entity
-	 */
-	public void setRoot(Root<T> root) {
-		this.root = root;
-	}
-
-	/**
-	 * Set CriteriaBuilder
-	 * 
-	 * @param cb the Criteria Builder
-	 */
-	public void setCb(CriteriaBuilder cb) {
-		this.cb = cb;
-	}
-
-	/**
-	 * Setup this class by passing the context
-	 * 
-	 * @param context The ANTLR Context
-	 * @throws NotImplementedException throw this exception is not yet implemented the code to support the datatype of the filter
-	 */
-	public void setup(ExprContext context) throws NotImplementedException {
-		if (context.children != null) {
-			this.context = context;
-
-			// If the first element of the filter is a function (ex.
-			// "tolower(value)") we need to shift the index of value and field
-			// accordingly.
-			String iField = this.context.getChild(indexField).getText();
-			if (iField.equals("tolower") || iField.equals("toupper")) {
-				isValueFromCaseFunction = true;
-			} else if (iField.equals("contains")) {
-				isValueFromContainFunction = true;
-			}
-
-			setParameters();
-		}
-	}
-
-	/**
 	 * This is the final part. It's generate predicates according on what is
 	 * requested by the context.
 	 * 
@@ -188,15 +188,7 @@ public class DefaultJPAFilterDao<T> {
 
 			if (this.context.IN() != null) {
 				In in = cb.in(path);
-				if (path.getJavaType() == Long.class)
-					this.context.NUMBER().forEach(s -> {
-						in.value(s.getText());
-					});
-
-				if (path.getJavaType() == String.class)
-					this.context.STRINGLITERAL().forEach(s -> {
-						in.value(s.getText().replace("'", ""));
-					});
+				in.value(this.value);
 				return in;
 			}
 
