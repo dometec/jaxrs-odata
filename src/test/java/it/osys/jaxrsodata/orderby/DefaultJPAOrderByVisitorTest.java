@@ -14,73 +14,66 @@ import it.osys.jaxrsodata.queryoptions.QueryOptions;
 public class DefaultJPAOrderByVisitorTest extends HSQLDBInitialize {
 
 	private List<TestEntity> getOrderedResults(String order) throws NotImplementedException {
-
 		QueryOptions queryOptions = new QueryOptions();
 		this.setEntityManager(em);
-
 		queryOptions.orderby = order;
-
 		return this.getAll(new DefaultJPAFilterVisitor<TestEntity>(), queryOptions);
 	}
 
-	/*
-	 * Test ASC
-	 */
 	@Test
 	public void getFieldOrderByASC() throws NotImplementedException {
-		// Orderby query.
-		final String orderby = "version asc";
 
-		// Expected result.
-		final int expSize = 3;
-		final Long exp1Id = 1L;
-		final Long exp2Id = 2L;
-		final Long exp3Id = 3L;
+		String orderby = "version asc";
 
 		List<TestEntity> result = getOrderedResults(orderby);
 
-		Assert.assertEquals(expSize, result.size());
-		Assert.assertEquals(exp1Id, result.get(0).getId());
-		Assert.assertEquals(exp2Id, result.get(1).getId());
-		Assert.assertEquals(exp3Id, result.get(2).getId());
+		Assert.assertEquals(4, result.size());
+		Assert.assertEquals(1l, result.get(0).getId().longValue());
+		Assert.assertEquals(2l, result.get(1).getId().longValue());
+		Assert.assertEquals(3l, result.get(2).getId().longValue());
+		Assert.assertEquals(4l, result.get(3).getId().longValue());
 	}
 
-	/*
-	 * Test DESC
-	 */
 	@Test
 	public void getFieldOrderByDESC() throws NotImplementedException {
-		// Orderby query.
-		final String orderby = "version desc";
 
-		// Expected result.
-		final int expSize = 3;
-		final Long exp1Id = 1L;
-		final Long exp2Id = 2L;
-		final Long exp3Id = 3L;
+		String orderby = "version desc";
 
 		List<TestEntity> result = getOrderedResults(orderby);
 
-		Assert.assertEquals(expSize, result.size());
-		Assert.assertEquals(exp1Id, result.get(2).getId());
-		Assert.assertEquals(exp2Id, result.get(1).getId());
-		Assert.assertEquals(exp3Id, result.get(0).getId());
+		Assert.assertEquals(4, result.size());
+		Assert.assertEquals(1l, result.get(3).getId().longValue());
+		Assert.assertEquals(2l, result.get(2).getId().longValue());
+		Assert.assertEquals(3l, result.get(1).getId().longValue());
+		Assert.assertEquals(4l, result.get(0).getId().longValue());
 	}
 
-	/*
-	 * Test IllegalState
-	 */
-	@SuppressWarnings("unused")
 	@Test
-	public void throwExceptionWhenOrderByNull() {
-		// Orderby query.
-		final String orderby = "";
+	public void getOrderByASCInnerField() throws NotImplementedException {
 
-		try {
-			List<TestEntity> result = getOrderedResults(orderby);
-		} catch (Exception e) {
-			Assert.assertEquals(IllegalStateException.class, e.getClass());
-		}
+		String orderby = "address/city asc";
+
+		List<TestEntity> result = getOrderedResults(orderby);
+
+		Assert.assertEquals(4, result.size());
+		Assert.assertEquals("citta1", result.get(0).getAddress().getCity());
+		Assert.assertEquals("citta2", result.get(1).getAddress().getCity());
+		Assert.assertEquals("citta25", result.get(2).getAddress().getCity());
+		Assert.assertEquals("citta3", result.get(3).getAddress().getCity());
+	}
+
+	@Test
+	public void getOrderByDescInnerField() throws NotImplementedException {
+
+		String orderby = "address/city desc";
+
+		List<TestEntity> result = getOrderedResults(orderby);
+
+		Assert.assertEquals(4, result.size());
+		Assert.assertEquals("citta3", result.get(0).getAddress().getCity());
+		Assert.assertEquals("citta25", result.get(1).getAddress().getCity());
+		Assert.assertEquals("citta2", result.get(2).getAddress().getCity());
+		Assert.assertEquals("citta1", result.get(3).getAddress().getCity());
 	}
 
 }

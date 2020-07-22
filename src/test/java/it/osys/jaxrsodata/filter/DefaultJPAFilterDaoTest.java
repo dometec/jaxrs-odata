@@ -50,7 +50,7 @@ public class DefaultJPAFilterDaoTest extends HSQLDBInitialize {
 		final String filter = "internalDate/lastUpdate ge '2010-01-01T12:00:00'";
 
 		// Expected result.
-		final int expSize = 3;
+		final int expSize = 4;
 
 		List<TestEntity> result = getFilteredResults(filter);
 
@@ -137,7 +137,7 @@ public class DefaultJPAFilterDaoTest extends HSQLDBInitialize {
 		final String filter = "stringType3 eq 'string' or stringType3 eq 'string1'";
 
 		// Expected result.
-		final int expSize = 2;
+		final int expSize = 3;
 		final Long exp1Id = 2L;
 		final Long exp2Id = 3L;
 
@@ -208,7 +208,7 @@ public class DefaultJPAFilterDaoTest extends HSQLDBInitialize {
 		final String filter = "not contains(version, '1')";
 
 		// Expected result.
-		final int expSize = 2;
+		final int expSize = 3;
 		final Long exp1Id = 2L;
 
 		List<TestEntity> result = getFilteredResults(filter);
@@ -223,7 +223,7 @@ public class DefaultJPAFilterDaoTest extends HSQLDBInitialize {
 		final String filter = "not contains(version, '3')";
 
 		// Expected result.
-		final int expSize = 2;
+		final int expSize = 3;
 		final Long exp1Id = 1L;
 		final Long exp2Id = 2L;
 
@@ -305,7 +305,7 @@ public class DefaultJPAFilterDaoTest extends HSQLDBInitialize {
 		final String filter = "contains(address/city, 'citt')";
 
 		// Expected result.
-		final int expSize = 3;
+		final int expSize = 4;
 		final Long exp1Id = 1L;
 
 		List<TestEntity> result = getFilteredResults(filter);
@@ -327,7 +327,7 @@ public class DefaultJPAFilterDaoTest extends HSQLDBInitialize {
 
 		List<TestEntity> result = getFilteredResults(filter);
 
-		Assert.assertEquals(1, result.size());
+		Assert.assertEquals(2, result.size());
 		Assert.assertEquals(null, result.get(0).getLocalDateTimeType());
 		Assert.assertEquals(expId, result.get(0).getId());
 	}
@@ -358,7 +358,7 @@ public class DefaultJPAFilterDaoTest extends HSQLDBInitialize {
 
 		List<TestEntity> result = getFilteredResults(filter);
 
-		Assert.assertEquals(2, result.size());
+		Assert.assertEquals(3, result.size());
 		Assert.assertEquals(stringType, result.get(0).getStringType3());
 		Assert.assertEquals(expId, result.get(0).getId());
 	}
@@ -518,7 +518,7 @@ public class DefaultJPAFilterDaoTest extends HSQLDBInitialize {
 
 		List<TestEntity> result = getFilteredResults(filter);
 
-		Assert.assertEquals(2, result.size());
+		Assert.assertEquals(3, result.size());
 		Assert.assertEquals(expDevType, result.get(0).getStringType1());
 		Assert.assertEquals(expId, result.get(0).getId());
 	}
@@ -534,7 +534,7 @@ public class DefaultJPAFilterDaoTest extends HSQLDBInitialize {
 
 		List<TestEntity> result = getFilteredResults(filter);
 
-		Assert.assertEquals(2, result.size());
+		Assert.assertEquals(3, result.size());
 		Assert.assertEquals(version, result.get(0).getVersion());
 		Assert.assertEquals(expId, result.get(0).getId());
 	}
@@ -566,7 +566,7 @@ public class DefaultJPAFilterDaoTest extends HSQLDBInitialize {
 
 		List<TestEntity> result = getFilteredResults(filter);
 
-		Assert.assertEquals(2, result.size());
+		Assert.assertEquals(3, result.size());
 		Assert.assertEquals(os, result.get(0).getEnumType());
 		Assert.assertEquals(expId, result.get(0).getId());
 	}
@@ -585,7 +585,7 @@ public class DefaultJPAFilterDaoTest extends HSQLDBInitialize {
 
 		List<TestEntity> result = getFilteredResults(filter);
 
-		Assert.assertEquals(2, result.size());
+		Assert.assertEquals(3, result.size());
 		Assert.assertEquals(version, result.get(0).getVersion());
 		Assert.assertEquals(expId, result.get(0).getId());
 	}
@@ -609,10 +609,10 @@ public class DefaultJPAFilterDaoTest extends HSQLDBInitialize {
 	@Test
 	public void getFieldGTLocalTime() throws NotImplementedException {
 		// Filter query.
-		final String filter = "localTimeType gt '13:00:00'";
+		final String filter = "localTimeType gt '15:00:00'";
 
 		// Expected result.
-		final Long expId = 2L;
+		final Long expId = 4L;
 
 		List<TestEntity> result = getFilteredResults(filter);
 
@@ -623,10 +623,10 @@ public class DefaultJPAFilterDaoTest extends HSQLDBInitialize {
 	@Test
 	public void getFieldGTLocalDate() throws NotImplementedException {
 		// Filter query.
-		final String filter = "localDateType gt '2017-01-02'";
+		final String filter = "localDateType gt '2018-01-01'";
 
 		// Expected result.
-		final Long expId = 2L;
+		final Long expId = 4L;
 
 		List<TestEntity> result = getFilteredResults(filter);
 
@@ -644,7 +644,7 @@ public class DefaultJPAFilterDaoTest extends HSQLDBInitialize {
 
 		List<TestEntity> result = getFilteredResults(filter);
 
-		Assert.assertEquals(1, result.size());
+		Assert.assertEquals(2, result.size());
 		Assert.assertEquals(expId, result.get(0).getId());
 	}
 
@@ -657,7 +657,7 @@ public class DefaultJPAFilterDaoTest extends HSQLDBInitialize {
 		final String filter = "version ge 1";
 
 		// Expected result.
-		final int expSize = 3;
+		final int expSize = 4;
 		final Long exp1Id = 1L;
 		final int exp1version = 1;
 		final Long exp2Id = 2L;
@@ -707,7 +707,7 @@ public class DefaultJPAFilterDaoTest extends HSQLDBInitialize {
 
 		List<TestEntity> result = getFilteredResults(filter);
 
-		Assert.assertEquals(1, result.size());
+		Assert.assertEquals(2, result.size());
 		Assert.assertEquals(expId, result.get(0).getId());
 	}
 
@@ -721,7 +721,7 @@ public class DefaultJPAFilterDaoTest extends HSQLDBInitialize {
 
 		List<TestEntity> result = getFilteredResults(filter);
 
-		Assert.assertEquals(1, result.size());
+		Assert.assertEquals(2, result.size());
 		Assert.assertEquals(expId, result.get(0).getId());
 	}
 
@@ -735,7 +735,7 @@ public class DefaultJPAFilterDaoTest extends HSQLDBInitialize {
 
 		List<TestEntity> result = getFilteredResults(filter);
 
-		Assert.assertEquals(1, result.size());
+		Assert.assertEquals(2, result.size());
 		Assert.assertEquals(expId, result.get(0).getId());
 	}
 
@@ -981,7 +981,7 @@ public class DefaultJPAFilterDaoTest extends HSQLDBInitialize {
 
 		List<TestEntity> result = getFilteredResults(filter);
 
-		Assert.assertEquals(1, result.size());
+		Assert.assertEquals(2, result.size());
 		Assert.assertEquals("DISTRIBUTION_NAME_UP", result.get(0).getStringType2());
 	}
 

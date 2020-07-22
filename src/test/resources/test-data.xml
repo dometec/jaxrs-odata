@@ -51,6 +51,22 @@
 		version="3"
 	/>
   
+	<test_entity
+		id="4"
+		string_type_1="app24"
+		string_type_2="DISTRIBUTION_NAME_UP"
+		string_type_3="string1"
+		string_type_4="token2"
+        boolfield="false"
+		insert_date="2019-11-01 12:00:00"
+		last_update="2019-12-01 12:00:00"
+		localtime_type="19:00:00"
+		localdate_type="2018-01-02"
+		enum_type="Enum3"
+        city="citta25"
+		version="4"
+	/>
+  
     <test_entity_owners
       id="1"
       owner="1"/>
