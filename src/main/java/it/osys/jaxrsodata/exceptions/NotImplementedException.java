@@ -7,25 +7,10 @@ package it.osys.jaxrsodata.exceptions;
  *
  */
 @SuppressWarnings("serial")
-public class NotImplementedException extends Exception {
-
-	public NotImplementedException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-		super(message, cause, enableSuppression, writableStackTrace);
-	}
-
-	public NotImplementedException(String message, Throwable cause) {
-		super(message, cause);
-	}
+public class NotImplementedException extends RuntimeException {
 
 	public NotImplementedException(String message) {
 		super(message);
 	}
 
-	public NotImplementedException(Throwable cause) {
-		super(cause);
-	}
-
-	public NotImplementedException() {
-		super();
-	}
 }

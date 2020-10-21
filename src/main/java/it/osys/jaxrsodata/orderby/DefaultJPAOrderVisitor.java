@@ -4,9 +4,9 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Root;
 
-import it.osys.jaxrsodata.ODataOrderByParser.ExprContext;
+import it.osys.jaxrsodata.antlr4.ODataOrderByParser.ExprContext;
 
-public class DefaultJPAOrderByVisitor<T> implements JPAOrderByVisitor<T> {
+public class DefaultJPAOrderVisitor<T> implements JPAOrderVisitor<T> {
 
 	private Root<T> root;
 	private CriteriaBuilder cb;

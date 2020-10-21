@@ -3,9 +3,9 @@ package it.osys.jaxrsodata.orderby;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Root;
 
-import it.osys.jaxrsodata.ODataOrderByParser.ExprContext;
+import it.osys.jaxrsodata.antlr4.ODataOrderByParser.ExprContext;
 
-public interface JPAOrderByVisitor<T> {
+public interface JPAOrderVisitor<T> {
 
 	Object visit(ExprContext context);
 

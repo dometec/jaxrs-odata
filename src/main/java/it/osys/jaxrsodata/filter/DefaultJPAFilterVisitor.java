@@ -4,9 +4,8 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
-import it.osys.jaxrsodata.ODataFilterParser;
-import it.osys.jaxrsodata.ODataFilterParser.ExprContext;
-import it.osys.jaxrsodata.exceptions.NotImplementedException;
+import it.osys.jaxrsodata.antlr4.ODataFilterParser;
+import it.osys.jaxrsodata.antlr4.ODataFilterParser.ExprContext;
 
 public class DefaultJPAFilterVisitor<T> implements JPAFilterVisitor<T> {
 
@@ -24,7 +23,7 @@ public class DefaultJPAFilterVisitor<T> implements JPAFilterVisitor<T> {
 	}
 
 	@Override
-	public Object visit(ExprContext context) throws NotImplementedException {
+	public Object visit(ExprContext context) {
 
 		if (context.AND() != null)
 			return cb.and((Predicate) visit(context.expr(0)), (Predicate) visit(context.expr(1)));

@@ -1,4 +1,4 @@
-package it.osys.jaxrsodata.queryoptions;
+package it.osys.jaxrsodata;
 
 /**
  * 

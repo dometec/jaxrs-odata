@@ -14,7 +14,7 @@ import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
-import it.osys.jaxrsodata.ODataFilterParser.ExprContext;
+import it.osys.jaxrsodata.antlr4.ODataFilterParser.ExprContext;
 import it.osys.jaxrsodata.exceptions.NotImplementedException;
 
 public class DefaultJPAFilterDao<T> {
@@ -49,9 +49,8 @@ public class DefaultJPAFilterDao<T> {
 	 * Setup this class by passing the context
 	 * 
 	 * @param context The ANTLR Context
-	 * @throws NotImplementedException throw this exception is not yet implemented the code to support the datatype of the filter
 	 */
-	public void setup(ExprContext context) throws NotImplementedException {
+	public void setup(ExprContext context) {
 
 		if (context.children != null) {
 
@@ -105,10 +104,9 @@ public class DefaultJPAFilterDao<T> {
 	 * @param clazz
 	 * @param value
 	 * @return Typed value.
-	 * @throws NotImplementedException
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private static Object convValueToFieldType(Path<Object> path, String value) throws NotImplementedException {
+	private static Object convValueToFieldType(Path<Object> path, String value) {
 
 		// If i just want to check if the db field is empty just skip value
 		// casting.

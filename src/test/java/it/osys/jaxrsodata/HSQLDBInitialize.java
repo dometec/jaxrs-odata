@@ -17,11 +17,10 @@ import org.dbunit.ext.hsqldb.HsqldbDataTypeFactory;
 import org.dbunit.operation.DatabaseOperation;
 import org.hibernate.HibernateException;
 import org.hibernate.internal.SessionImpl;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 
-import it.osys.jaxrsodata.OData;
 import it.osys.jaxrsodata.entity.TestEntity;
 
 public class HSQLDBInitialize extends OData<TestEntity> {
@@ -31,7 +30,11 @@ public class HSQLDBInitialize extends OData<TestEntity> {
 	protected static IDatabaseConnection connection;
 	protected static IDataSet dataset;
 
-	@BeforeClass
+	public HSQLDBInitialize() {
+		super(TestEntity.class);
+	}
+
+	@BeforeAll
 	public static void init() throws HibernateException, DatabaseUnitException {
 
 		emf = Persistence.createEntityManagerFactory("test_persistence_unit");
@@ -47,22 +50,12 @@ public class HSQLDBInitialize extends OData<TestEntity> {
 
 	}
 
-	public HSQLDBInitialize() {
-		super(TestEntity.class);
-	}
-
-	/**
-	 * Will clean the dataBase before each test
-	 * 
-	 * @throws SQLException
-	 * @throws DatabaseUnitException
-	 */
-	@Before
+	@BeforeEach
 	public void cleanDB() throws DatabaseUnitException, SQLException {
 		DatabaseOperation.CLEAN_INSERT.execute(connection, dataset);
 	}
 
-	@AfterClass
+	@AfterAll
 	public static void tearDown() {
 		if (em != null) {
 			em.clear();

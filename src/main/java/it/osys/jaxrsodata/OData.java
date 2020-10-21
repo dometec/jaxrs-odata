@@ -10,19 +10,21 @@ import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
-import org.antlr.v4.runtime.ANTLRInputStream;
+import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.misc.NotNull;
 
-import it.osys.jaxrsodata.ODataFilterParser.ExprContext;
-import it.osys.jaxrsodata.exceptions.NotImplementedException;
+import it.osys.jaxrsodata.antlr4.ODataFilterLexer;
+import it.osys.jaxrsodata.antlr4.ODataFilterParser;
+import it.osys.jaxrsodata.antlr4.ODataFilterParser.ExprContext;
+import it.osys.jaxrsodata.antlr4.ODataOrderByLexer;
+import it.osys.jaxrsodata.antlr4.ODataOrderByParser;
+import it.osys.jaxrsodata.filter.DefaultJPAFilterVisitor;
 import it.osys.jaxrsodata.filter.JPAFilterVisitor;
-import it.osys.jaxrsodata.orderby.DefaultJPAOrderByVisitor;
-import it.osys.jaxrsodata.orderby.JPAOrderByVisitor;
-import it.osys.jaxrsodata.queryoptions.QueryOptions;
+import it.osys.jaxrsodata.orderby.DefaultJPAOrderVisitor;
+import it.osys.jaxrsodata.orderby.JPAOrderVisitor;
 
 /**
- * Base Class. 1- Set entity manager 2- Call getAll or countAll passing
+ * Base Class. 1- Set entity manager 2- Call getAll (and countAll) passing
  * QueryOption
  *
  * @param <T>
@@ -30,12 +32,21 @@ import it.osys.jaxrsodata.queryoptions.QueryOptions;
 public class OData<T> {
 
 	private EntityManager em;
-
 	private Class<T> entityClass;
+	private JPAFilterVisitor<T> visitorFilter = new DefaultJPAFilterVisitor<T>();
+	private JPAOrderVisitor<T> visitorOrder = new DefaultJPAOrderVisitor<T>();
 
-	/** I need the class since I can't rely on to Reflection to get che Generic Type **/
+	/** I need the class since I can't rely on to Reflection to get the Generic Type **/
 	public OData(Class<T> clazz) {
 		entityClass = clazz;
+	}
+
+	public void setVisitorFilter(JPAFilterVisitor<T> visitorFilter) {
+		this.visitorFilter = visitorFilter;
+	}
+
+	public void setVisitorOrderBy(JPAOrderVisitor<T> visitorOrderBy) {
+		this.visitorOrder = visitorOrderBy;
 	}
 
 	/**
@@ -44,7 +55,7 @@ public class OData<T> {
 	 * @param em
 	 *            the new entity manager
 	 */
-	
+
 	public void setEntityManager(EntityManager em) {
 		this.em = em;
 	}
@@ -57,25 +68,22 @@ public class OData<T> {
 	 * @param queryOptions
 	 *            the query options
 	 * @return the all
-	 * @throws NotImplementedException
-	 *             the not implemented exception
 	 */
-	public List<T> getAll(JPAFilterVisitor<T> visitor, QueryOptions queryOptions) throws NotImplementedException {
+	public List<T> getAll(QueryOptions queryOptions) {
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<T> query = cb.createQuery(entityClass);
 		Root<T> root = query.from(entityClass);
 
-		visitor.setCb(cb);
-		visitor.setRoot(root);
+		visitorFilter.setCb(cb);
+		visitorFilter.setRoot(root);
 		if (queryOptions.filter != null && !queryOptions.filter.isEmpty())
-			query.where(createWherePredicate(visitor, queryOptions.filter));
+			query.where(createWherePredicate(visitorFilter, queryOptions.filter));
 
-		JPAOrderByVisitor<T> visitorOrderBy = new DefaultJPAOrderByVisitor<T>();
-		visitorOrderBy.setCb(cb);
-		visitorOrderBy.setRoot(root);
+		visitorOrder.setCb(cb);
+		visitorOrder.setRoot(root);
 
 		if (queryOptions.orderby != null && !queryOptions.orderby.isEmpty())
-			query.orderBy(createOrderPredicate(visitorOrderBy, queryOptions.orderby));
+			query.orderBy(createOrderPredicate(visitorOrder, queryOptions.orderby));
 
 		TypedQuery<T> namedQuery = em.createQuery(query);
 		namedQuery.setFirstResult(queryOptions.skip);
@@ -92,21 +100,19 @@ public class OData<T> {
 	 * @param queryOptions
 	 *            the query options
 	 * @return the long
-	 * @throws NotImplementedException
-	 *             the not implemented exception
 	 */
-	public long countAll(JPAFilterVisitor<T> visitor, QueryOptions queryOptions) throws NotImplementedException {
+	public long countAll(QueryOptions queryOptions) {
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<Long> query = cb.createQuery(Long.class);
 		Root<T> root = query.from(entityClass);
 
 		query.select(cb.count(root));
 
-		visitor.setCb(cb);
-		visitor.setRoot(root);
+		visitorFilter.setCb(cb);
+		visitorFilter.setRoot(root);
 
 		if (queryOptions.filter != null)
-			query.where(createWherePredicate(visitor, queryOptions.filter));
+			query.where(createWherePredicate(visitorFilter, queryOptions.filter));
 
 		TypedQuery<Long> namedQuery = em.createQuery(query);
 
@@ -122,9 +128,9 @@ public class OData<T> {
 	 *            the order
 	 * @return the order
 	 */
-	protected Order createOrderPredicate(JPAOrderByVisitor<T> visitor, @NotNull String order) {
+	protected Order createOrderPredicate(JPAOrderVisitor<T> visitor, String order) {
 
-		final ODataOrderByLexer lexer = new ODataOrderByLexer(new ANTLRInputStream(order));
+		final ODataOrderByLexer lexer = new ODataOrderByLexer(CharStreams.fromString(order));
 		final CommonTokenStream tokens = new CommonTokenStream(lexer);
 		final ODataOrderByParser parser = new ODataOrderByParser(tokens);
 
@@ -141,12 +147,10 @@ public class OData<T> {
 	 * @param filter
 	 *            the filter
 	 * @return the predicate
-	 * @throws NotImplementedException
-	 *             the not implemented exception
 	 */
-	protected Predicate createWherePredicate(JPAFilterVisitor<T> visitor, String filter) throws NotImplementedException {
+	protected Predicate createWherePredicate(JPAFilterVisitor<T> visitor, String filter) {
 
-		final ODataFilterLexer lexer = new ODataFilterLexer(new ANTLRInputStream(filter));
+		final ODataFilterLexer lexer = new ODataFilterLexer(CharStreams.fromString(filter));
 		final CommonTokenStream tokens = new CommonTokenStream(lexer);
 		final ODataFilterParser parser = new ODataFilterParser(tokens);
 
