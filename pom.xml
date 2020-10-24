@@ -7,15 +7,9 @@
   <version>1.2.0-SNAPSHOT</version>
   <packaging>jar</packaging>
 
-  <name>Simple OData implementation for JAX-RS and Hibernate</name>
+  <name>Simple OData implementation for JAX-RS and JPA</name>
   <description>Utility classes to expose Endpoint as OData Specification, only for server side query, filter and pagination.</description>
-
-  <developers>
-    <developer>
-      <name>Domenico Briganti</name>
-      <email>dometec@gmail.com</email>
-    </developer>
-  </developers>
+  <url>http://docs.osys.it/it.osys.jaxrsodata/</url>
 
   <licenses>
     <license>
@@ -45,7 +39,41 @@
       <id>ossrh</id>
       <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
     </repository>
+    <site>
+      <id>osys-docs</id>
+      <url>scp://docs.osys.it/var/www/docs.osys.it/it.osys.jaxrsodata/</url>
+    </site>
   </distributionManagement>
+
+  <organization>
+    <name>Osys SRL</name>
+    <url>http://www.osys.it</url>
+  </organization>
+
+  <issueManagement>
+    <system>redmine</system>
+    <url>https://redmine.osys.it</url>
+  </issueManagement>
+
+  <ciManagement>
+    <system>jenkins</system>
+    <url>http://jenkins.osys.it</url>
+  </ciManagement>
+
+  <developers>
+    <developer>
+      <id>domenico.briganti</id>
+      <email>domenico.briganti@osys.it</email>
+      <name>Domenico Briganti</name>
+      <roles>
+        <role>Software Architect</role>
+      </roles>
+      <url>https://www.osys.it</url>
+      <organization>Osys srl</organization>
+      <organizationUrl>http://www.osys.it</organizationUrl>
+      <timezone>+1</timezone>
+    </developer>
+  </developers>
 
   <dependencyManagement>
 
@@ -211,7 +239,14 @@
         </plugin>
         <plugin>
           <artifactId>maven-site-plugin</artifactId>
-          <version>3.7.1</version>
+          <version>3.9.1</version>
+          <dependencies>
+            <dependency><!-- add support for ssh/scp -->
+              <groupId>org.apache.maven.wagon</groupId>
+              <artifactId>wagon-ssh</artifactId>
+              <version>1.0</version>
+            </dependency>
+          </dependencies>
         </plugin>
         <plugin>
           <artifactId>maven-deploy-plugin</artifactId>

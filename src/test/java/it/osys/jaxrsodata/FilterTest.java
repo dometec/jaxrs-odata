@@ -19,14 +19,14 @@ public class FilterTest extends HSQLDBInitialize {
 		super.setEntityManager(em);
 		QueryOptions queryOptions = new QueryOptions();
 		queryOptions.filter = filter;
-		return this.getAll(queryOptions);
+		return this.get(queryOptions);
 	}
 
 	private long getFilteredCount(String filter) {
 		super.setEntityManager(em);
 		QueryOptions queryOptions = new QueryOptions();
 		queryOptions.filter = filter;
-		return this.countAll(queryOptions);
+		return this.count(queryOptions);
 	}
 
 	@Test

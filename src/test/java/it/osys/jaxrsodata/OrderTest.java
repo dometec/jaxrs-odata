@@ -16,7 +16,7 @@ public class OrderTest extends HSQLDBInitialize {
 		super.setEntityManager(em);
 		QueryOptions queryOptions = new QueryOptions();
 		queryOptions.orderby = order;
-		return this.getAll(queryOptions);
+		return this.get(queryOptions);
 	}
 
 	@Test

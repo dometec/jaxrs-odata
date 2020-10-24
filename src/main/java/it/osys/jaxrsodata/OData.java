@@ -27,7 +27,7 @@ import it.osys.jaxrsodata.orderby.JPAOrderVisitor;
  * Base Class. 1- Set entity manager 2- Call getAll (and countAll) passing
  * QueryOption
  *
- * @param <T>
+ * @param <T> Entity class
  */
 public class OData<T> {
 
@@ -36,7 +36,9 @@ public class OData<T> {
 	private JPAFilterVisitor<T> visitorFilter = new DefaultJPAFilterVisitor<T>();
 	private JPAOrderVisitor<T> visitorOrder = new DefaultJPAOrderVisitor<T>();
 
-	/** I need the class since I can't rely on to Reflection to get the Generic Type **/
+	/** I need the class since I can't rely on to Reflection to get the Generic Type
+	 * @param clazz The Entity class 
+	 **/
 	public OData(Class<T> clazz) {
 		entityClass = clazz;
 	}
@@ -61,15 +63,13 @@ public class OData<T> {
 	}
 
 	/**
-	 * Query the db getting all result according to query options.
+	 * Query the db fot entity getting the result according to query options.
 	 *
-	 * @param visitor
-	 *            the visitor
 	 * @param queryOptions
 	 *            the query options
-	 * @return the all
+	 * @return the recordset
 	 */
-	public List<T> getAll(QueryOptions queryOptions) {
+	public List<T> get(QueryOptions queryOptions) {
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<T> query = cb.createQuery(entityClass);
 		Root<T> root = query.from(entityClass);
@@ -95,13 +95,11 @@ public class OData<T> {
 	/**
 	 * Count all result.
 	 *
-	 * @param visitor
-	 *            the visitor
 	 * @param queryOptions
 	 *            the query options
-	 * @return the long
+	 * @return the number of record impacted by the filter 
 	 */
-	public long countAll(QueryOptions queryOptions) {
+	public long count(QueryOptions queryOptions) {
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<Long> query = cb.createQuery(Long.class);
 		Root<T> root = query.from(entityClass);

@@ -1,56 +1,55 @@
+Introduction
 
-[![Build Status](https://travis-ci.org/dometec/jaxrs-odata.svg?branch=master)](https://travis-ci.org/dometec/jaxrs-odata)
+  This library implements a subset (very very little) of {{{https://www.odata.org/documentation/}OData speficication}}, the {{{http://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part1-protocol.html#_Toc31358947}Quering Collection}}.
 
-[![codecov](https://codecov.io/gh/dometec/jaxrs-odata/branch/master/graph/badge.svg)](https://codecov.io/gh/dometec/jaxrs-odata)
+  The primary scope of this library is to implement the filter, order and pagination of JPA Entity using the OData sintax. The library use the language specified in OData Query Collection to create dinamically JPA Criteria Query. 
 
-[Maven generated site](https://docs.osys.it/it.osys.jaxrsodata/)
+  The parameters can be taken directly from an JAX-RS Endpoint using the utility class QueryOptionsParser.
 
-# Introduction
+*--------------+----------------+
+| $skip        | How many record skip before the first record returned       |
+*--------------+----------------+
+| $top         | How many record return     |
+*--------------+----------------+
+| $count       | Boolean value used to ask to count how many records are impacted by the filter       |
+*--------------+----------------+
+| $orderby     | Sort the records    |
+*--------------+----------------+
+| $filter      | Filter the records     |
+*--------------+----------------+
+The parameter you can use in Query Parameter
 
-This library implements a subset (very very little) of [OData speficication](https://www.odata.org/documentation/), the [Quering Collection](http://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part1-protocol.html#_Toc31358947).
+  For more information on OData you can see {{https://www.odata.org/getting-started/}}.
 
-The primary scope of this library is to implement the filter, order and pagination of JPA Entity using the OData sintax. The library use the language specified in OData Query Collection to create dinamically JPA Criteria Query.
+Installations
 
-The parameters can be taken directly from an JAX-RS Endpoint using the utility class QueryOptionsParser:
+  Add the library as dependency:
 
-1. $skip - How many record skip before the first record returned
-2. $top - How many record return
-3. $count - Boolean value used to ask to count how many records are impacted by the filter
-4. $orderby - Sort the records
-5. $filter - Filter the records
-
-
-  For more information on OData you can see https://www.odata.org/getting-started/.
-
-# Installations
-
-Add the library as dependency:
-
-```
++------------------------------------------+
 <dependency>
   <groupId>it.osys</groupId>
   <artifactId>jaxrs-odata</artifactId>
   <version>1.2.0</version>
 </dependency>
-```
++------------------------------------------+
 
-# Usage
+Usage
 
-In the code, create an instance of OData class passing the Entity Bean Class. Set the Entity Manager and call <getAll> method or the <count> method passing the QueryOptions.
+  In the code, create an instance of OData class passing the Entity Bean Class. Set the Entity Manager and call <getAll> method or the <count> method passing the QueryOptions.
 
-```
++------------------------------------------+
 OData<Author> odata = new OData<Author>(Author.class);
 odata.setEntityManager(em);
 ...
 odata.get(queryOptions);
 odata.count(queryOptions);
-```
++------------------------------------------+
 
-# Usage Examples
+Usage Examples
 
   With this rest Endpoint:
 
-```
++------------------------------------------+
 @GET
 @Path("authors")
 @Produces(MediaType.APPLICATION_JSON)
@@ -60,27 +59,29 @@ public Collection<Author> getAllAuthors(UriInfo info) {
   odata.setEntityManager(em);
   return odata.getAll(queryOptions);
 }
-```
++------------------------------------------+
 
-_This is only an exampe, I advice to use a DTO and do not output JPA Entity Bean directly._
+  <This is only an exampe, I advice to use a DTO and do not output JPA Entity Bean directly.>
 
-You can get authors, filtered, ordered and paginated using a request like this:
+  You can get authors, filtered, ordered and paginated using a request like this:
 
-```http://<SERVER>/authors?$top=10&$skip=0&$filter=contains(name, 'Adriano')```
++------------------------------------------+
+http://<SERVER>/authors?$top=10&$skip=0&$filter=contains(name, 'Adriano')
++------------------------------------------+
   
-Or
+  Or
 
-```http://<SERVER>/authors?$top=10&$skip=10&$filter=bod ge '1980-01-01' and not (contains(name, 'Valerio'))&$order=address/city asc```
++------------------------------------------+
+http://<SERVER>/authors?$top=10&$skip=10&$filter=bod ge '1980-01-01' and not (contains(name, 'Valerio'))&$order=address/city asc
++------------------------------------------+
   
-You can see many exampe in the test classes.  
+  You can see many exampe in the test classes.  
 
-# Other suggestions
+Output compliant to OData Specification
 
-## Output compliant to OData Specification
+  Use a bean like this to marshialing the output data:
 
-Use a bean like this to marshialing the output data:
-
-```
++------------------------------------------+
 import java.util.Collection;
 
 import javax.json.bind.annotation.JsonbProperty;
@@ -98,11 +99,11 @@ public class ResultSet<T> {
 	}
 
 }
-```
++------------------------------------------+
 
-The rest method, with the logic to output also the total record count:
+  The rest method, with the logic to output also the total record count:
 
-```
++------------------------------------------+
 	@GET
 	@Path("authors")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -118,20 +119,20 @@ The rest method, with the logic to output also the total record count:
 			resultSet.count = odata.countAll(queryOptions);
 		return resultSet;
 	}
-```
++------------------------------------------+
 
-## Enrich Open API using Eclipse Microprofile
+Enrich Open API using Eclipse Microprofile
 
   You can use the filter method to enrich the swagger json with OData parameter when the Operation's summary contains "odata" string.
-  Add the following content in file **src/main/resources/META-INF/microprofile-config.properties** with:
+  Add the following content in file <<<src/main/resources/META-INF/microprofile-config.properties>>> with:
 
-```
++-----------------------------------------------------+
 mp.openapi.filter=it.osys.jaxrsodata.ODataParamsFilter
-```
++-----------------------------------------------------+
 
-And add this class:
+  And add this class:
   
-```
++------------------------------------------+
 import java.util.ArrayList;
 
 import org.eclipse.microprofile.openapi.OASFactory;
@@ -219,11 +220,11 @@ public class ODataParamsFilter implements OASFilter {
   }
 
 }
-```
++------------------------------------------+
   
-And annotate the method with **@Operation**. Remember to add "odata" in his summary.
+  And annotate the method with <@Operation>. Remember to add "odata" in his summary.
 
-```
++------------------------------------------+
 ...
 import org.eclipse.microprofile.openapi.annotations.Operation;
 ...
@@ -233,14 +234,14 @@ import org.eclipse.microprofile.openapi.annotations.Operation;
 	@Path("authors")
 	@Produces(MediaType.APPLICATION_JSON)
 	public ResultSet<Author> authors(UriInfo info) {
-```
++------------------------------------------+
 
   
-## Enrich Open API using Swagger
+Enrich Open API using Swagger
 
-Add this annotation:
+  Add this annotation:
 
-```
++------------------------------------------+
 package it.osys.jaxrsodata;
 
 import java.lang.annotation.ElementType;
@@ -264,23 +265,23 @@ import io.swagger.annotations.ApiImplicitParams;
 public @interface ODataImplicitParams {
 
 }
-```
++------------------------------------------+
 
-And add it to Endpoint:
+  And add it to Endpoint:
 
-```
++------------------------------------------+
 @GET
 @Path("authors")
 @ODataImplicitParams
 @Produces(MediaType.APPLICATION_JSON)
 public ResultSet<Author> authors(UriInfo info) \{
-```
++------------------------------------------+
 
-# TODO
+TODO
 
   * The input parameter reference fields in the Entity Bean, and the fields maybe do not has the same name of the field present in the return recordset.
 
-# Demo
+Demo
 
-See https://github.com/dometec/jaxrs-odata-example
+  {{{https://github.com/dometec/jaxrs-odata-example}}}
 
