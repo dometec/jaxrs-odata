@@ -64,7 +64,7 @@ public Collection<Author> getAllAuthors(UriInfo info) {
 }
 ```
 
-_This is only an exampe, I advice to use a DTO and do not output JPA Entity Bean directly._
+_This is only an example, I advice to use a DTO (Data Transfer Object), don't output JPA Entity Bean directly._
 
 You can get authors, filtered, ordered and paginated using a request like this:
 
@@ -74,7 +74,7 @@ Or
 
 ```http://<SERVER>/authors?$top=10&$skip=10&$filter=bod ge '1980-01-01' and not (contains(name, 'Valerio'))&$order=address/city asc```
   
-You can see many exampe in the test classes.  
+You can see many examples in the [test classes](https://github.com/dometec/jaxrs-odata/blob/master/src/test/java/it/osys/jaxrsodata/FilterTest.java).
 
 # Other suggestions
 
