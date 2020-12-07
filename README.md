@@ -284,5 +284,5 @@ public ResultSet<Author> authors(UriInfo info) \{
 
 # Demo
 
-See https://github.com/dometec/jaxrs-odata-example
+See https://github.com/dometec/jaxrs-odata-examples
 
