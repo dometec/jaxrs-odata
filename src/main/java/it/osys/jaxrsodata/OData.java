@@ -126,7 +126,7 @@ public class OData<T> {
 	 *            the order
 	 * @return the order
 	 */
-	protected Order createOrderPredicate(JPAOrderVisitor<T> visitor, String order) {
+	public Order createOrderPredicate(JPAOrderVisitor<T> visitor, String order) {
 
 		final ODataOrderByLexer lexer = new ODataOrderByLexer(CharStreams.fromString(order));
 		final CommonTokenStream tokens = new CommonTokenStream(lexer);
@@ -146,7 +146,7 @@ public class OData<T> {
 	 *            the filter
 	 * @return the predicate
 	 */
-	protected Predicate createWherePredicate(JPAFilterVisitor<T> visitor, String filter) {
+	public Predicate createWherePredicate(JPAFilterVisitor<T> visitor, String filter) {
 
 		final ODataFilterLexer lexer = new ODataFilterLexer(CharStreams.fromString(filter));
 		final CommonTokenStream tokens = new CommonTokenStream(lexer);
