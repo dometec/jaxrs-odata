@@ -63,7 +63,7 @@ public class OData<T> {
 	}
 
 	/**
-	 * Query the db fot entity getting the result according to query options.
+	 * Query the db for entity getting the result according to query options.
 	 *
 	 * @param queryOptions
 	 *            the query options
@@ -75,7 +75,8 @@ public class OData<T> {
 		Root<T> root = query.from(entityClass);
 
 		visitorFilter.setCb(cb);
-		visitorFilter.setRoot(root);
+		visitorFilter.setEntityManager(em);
+		visitorFilter.setRoot(root);		
 		if (queryOptions.filter != null && !queryOptions.filter.isEmpty())
 			query.where(createWherePredicate(visitorFilter, queryOptions.filter));
 

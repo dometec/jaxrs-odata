@@ -559,14 +559,28 @@ public class FilterTest extends HSQLDBInitialize {
 	}
 
 	@Test
-	public void throwExceptionWhenNotImplementedType() {
-		String filter = "notImplementedType eq 'strangeType'";
+	public void getValueFieldOfMap() {
+		String filter = "name/value eq = 'Aplicación uno traductor'";
+		List<TestEntity> result = getFilteredResults(filter);
+		Assert.assertEquals(1, result.size());
+		Assert.assertEquals("distribution_name", result.get(0).getStringType2());
+	}
 
-		try {
-			getFilteredResults(filter);
-		} catch (Exception e) {
-			Assert.assertEquals(NotImplementedException.class, e.getClass());
-		}
+	@Test
+	public void getKeyFieldOfMap() {
+		String filter = "name/key eq 'ES'";
+		List<TestEntity> result = getFilteredResults(filter);
+		Assert.assertEquals(2, result.size());
+		Assert.assertEquals("distribution_name", result.get(0).getStringType2());
+		Assert.assertEquals("DISTRIBUTION_NAME_UP", result.get(1).getStringType2());
+	}
+
+	@Test
+	public void getKeyAndValueFieldOfMap() {
+		String filter = "name/key eq 'ES' and name/value eq = 'Aplicación uno traductor'";
+		List<TestEntity> result = getFilteredResults(filter);
+		Assert.assertEquals(1, result.size());
+		Assert.assertEquals("distribution_name", result.get(0).getStringType2());
 	}
 
 	@Test

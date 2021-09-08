@@ -3,18 +3,22 @@ package it.osys.jaxrsodata.filter;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaBuilder.In;
 import javax.persistence.criteria.Join;
+import javax.persistence.criteria.MapJoin;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import it.osys.jaxrsodata.antlr4.ODataFilterParser.ExprContext;
+import it.osys.jaxrsodata.exceptions.FormatExceptionException;
 import it.osys.jaxrsodata.exceptions.NotImplementedException;
 
 public class DefaultJPAFilterDao<T> {
@@ -26,6 +30,8 @@ public class DefaultJPAFilterDao<T> {
 
 	private Object value;
 	private Object field;
+
+	private EntityManager em;
 
 	/**
 	 * Set JPA root
@@ -43,6 +49,10 @@ public class DefaultJPAFilterDao<T> {
 	 */
 	public void setCb(CriteriaBuilder cb) {
 		this.cb = cb;
+	}
+
+	public void setEm(EntityManager em) {
+		this.em = em;
 	}
 
 	/**
@@ -106,7 +116,7 @@ public class DefaultJPAFilterDao<T> {
 	 * @return Typed value.
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private static Object convValueToFieldType(Path<Object> path, String value) {
+	private Object convValueToFieldType(Path<Object> path, String value) {
 
 		// If i just want to check if the db field is empty just skip value
 		// casting.
@@ -145,7 +155,8 @@ public class DefaultJPAFilterDao<T> {
 			return value;
 		}
 
-		throw new NotImplementedException("Field type " + javaType.getName() + " not implemented yet!");
+		return em.getReference(javaType, value);
+
 	}
 
 	/**
@@ -262,10 +273,11 @@ public class DefaultJPAFilterDao<T> {
 
 			String attributeName = fieldname[idx];
 
-			if (path != null)
+			if (path != null) {
 				path = path.get(attributeName);
-			else
+			} else {
 				path = root.get(attributeName);
+			}
 
 			if ((fieldname.length - 1) > idx) {
 
@@ -275,6 +287,21 @@ public class DefaultJPAFilterDao<T> {
 							.findFirst();
 					Join<T, ?> join = opJoin.orElseGet(() -> root.join(attributeName));
 					path = join.get(fieldname[++idx]);
+
+				}
+
+				if (path.getJavaType().isAssignableFrom(Map.class)) {
+
+					Optional<Join<T, ?>> opJoin = root.getJoins().stream().filter(p -> p.getAttribute().getName().equals(attributeName))
+							.findFirst();
+					MapJoin join = (MapJoin) opJoin.orElseGet(() -> root.join(attributeName));
+					String f = fieldname[++idx];
+					if (f.equals("key"))
+						path = join.key();
+					else if (f.equals("value"))
+						path = join.value();
+					else
+						throw new FormatExceptionException("Only key or value you can specify in a map filter, got: " + f);
 
 				}
 			}

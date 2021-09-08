@@ -1,5 +1,6 @@
 package it.osys.jaxrsodata.filter;
 
+import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
@@ -11,6 +12,7 @@ public class DefaultJPAFilterVisitor<T> implements JPAFilterVisitor<T> {
 
 	private Root<T> root;
 	private CriteriaBuilder cb;
+	private EntityManager em;
 
 	@Override
 	public void setRoot(Root<T> root) {
@@ -20,6 +22,11 @@ public class DefaultJPAFilterVisitor<T> implements JPAFilterVisitor<T> {
 	@Override
 	public void setCb(CriteriaBuilder cb) {
 		this.cb = cb;
+	}
+
+	@Override
+	public void setEntityManager(EntityManager em) {
+		this.em = em;
 	}
 
 	@Override
@@ -40,6 +47,7 @@ public class DefaultJPAFilterVisitor<T> implements JPAFilterVisitor<T> {
 		DefaultJPAFilterDao<T> filterDao = new DefaultJPAFilterDao<T>();
 		filterDao.setCb(cb);
 		filterDao.setRoot(root);
+		filterDao.setEm(em);
 		filterDao.setup(context);
 
 		Predicate predicate = filterDao.getPredicate();

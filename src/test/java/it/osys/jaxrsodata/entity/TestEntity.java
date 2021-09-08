@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.CollectionTable;
@@ -13,8 +14,10 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.MapKeyJoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Version;
@@ -32,6 +35,12 @@ public class TestEntity implements InternalDateEnable, Serializable {
 
 	private InternalDate internalDate;
 
+	@ElementCollection(fetch = FetchType.LAZY)
+	@MapKeyJoinColumn(name = "langcode")
+	@CollectionTable(name = "entity_names", joinColumns = @JoinColumn(name = "entity_id", referencedColumnName = "id"))
+	@Column(name = "name", length = 50, nullable = false)
+	private Map<Language, String> name;
+
 	@Enumerated(EnumType.STRING)
 	@Column(name = "enum_type", nullable = false, length = 20)
 	private TestEnumEntity enumType;
@@ -47,7 +56,7 @@ public class TestEntity implements InternalDateEnable, Serializable {
 
 	@Column(name = "string_type_4")
 	private String stringType4;
-	
+
 	@Column(name = "boolfield")
 	private boolean boolfield;
 

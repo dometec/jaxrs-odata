@@ -1,6 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dataset>
 
+    <languages
+        code="IT"
+        language="Italiano"
+        enlanguage="Italian"
+    />
+    
+    <languages
+        code="ES"
+        language="Español"
+        enlanguage="Spanish"
+    />
+    
+    <languages
+        code="EN"
+        language="English"
+        enlanguage="English"
+    />
+    
+    <languages
+        code="ZH"
+        language="中文"
+        enlanguage="Chinese"
+    />
+
 	<test_entity
 		id="1"
 		string_type_1="app1"
@@ -67,6 +91,42 @@
 		version="4"
 	/>
   
+    <entity_names
+      entity_id="1"
+      name="Application one translator"
+      langcode="EN"
+    />
+    
+    <entity_names
+      entity_id="1"
+      name="Applicazione uno traduttore"
+      langcode="IT"
+    />
+    
+    <entity_names
+      entity_id="1"
+      name="Aplicación uno traductor"
+      langcode="ES"
+    />
+    
+    <entity_names
+      entity_id="2"
+      name="Application two integration"
+      langcode="EN"
+    />
+    
+    <entity_names
+      entity_id="2"
+      name="Applicazione due integrazione"
+      langcode="IT"
+    />
+    
+    <entity_names
+      entity_id="3"
+      name="Aplicación dos integración"
+      langcode="ES"
+    />
+  
     <test_entity_owners
       id="1"
       owner="1"/>
@@ -85,12 +145,14 @@
       string_type_1="app1"
       version="1"
     />
+    
     <test_entity_sub
       id="3"
       parent="1"
       string_type_1="app2"
       version="1"
     />
+    
     <test_entity_sub
       id="4"
       parent="1"

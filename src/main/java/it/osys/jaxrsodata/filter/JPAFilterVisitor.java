@@ -1,5 +1,6 @@
 package it.osys.jaxrsodata.filter;
 
+import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Root;
 
@@ -12,5 +13,7 @@ public interface JPAFilterVisitor<T> {
 	void setRoot(Root<T> root);
 
 	void setCb(CriteriaBuilder cb);
+	
+	void setEntityManager(EntityManager em);
 
 }
