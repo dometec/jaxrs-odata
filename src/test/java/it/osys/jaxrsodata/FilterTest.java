@@ -10,7 +10,6 @@ import org.junit.runner.RunWith;
 
 import it.osys.jaxrsodata.entity.TestEntity;
 import it.osys.jaxrsodata.entity.enums.TestEnumEntity;
-import it.osys.jaxrsodata.exceptions.NotImplementedException;
 
 @RunWith(JUnitPlatform.class)
 public class FilterTest extends HSQLDBInitialize {
@@ -54,6 +53,20 @@ public class FilterTest extends HSQLDBInitialize {
 		String filter = "internalDate/lastUpdate ge '2010-01-01T12:00:00'";
 		List<TestEntity> result = getFilteredResults(filter);
 		Assert.assertEquals(4, result.size());
+	}
+
+	@Test
+	public void testFloatGE() {
+		String filter = "length ge 10";
+		List<TestEntity> result = getFilteredResults(filter);
+		Assert.assertEquals(2, result.size());
+	}
+
+	@Test
+	public void testFloatLT() {
+		String filter = "length lt 5";
+		List<TestEntity> result = getFilteredResults(filter);
+		Assert.assertEquals(1, result.size());
 	}
 
 	@Test

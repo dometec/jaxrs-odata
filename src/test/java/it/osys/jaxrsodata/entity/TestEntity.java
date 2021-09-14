@@ -69,8 +69,8 @@ public class TestEntity implements InternalDateEnable, Serializable {
 	@Column(name = "localdatetime_type")
 	private LocalDateTime localDateTimeType;
 
-	@Column(name = "not_implemented_type")
-	private Float notImplementedType;
+	@Column(name = "length")
+	private Float length;
 
 	@ElementCollection
 	@CollectionTable(name = "test_entity_owners", joinColumns = @JoinColumn(name = "id"))

@@ -19,7 +19,6 @@ import javax.persistence.criteria.Root;
 
 import it.osys.jaxrsodata.antlr4.ODataFilterParser.ExprContext;
 import it.osys.jaxrsodata.exceptions.FormatExceptionException;
-import it.osys.jaxrsodata.exceptions.NotImplementedException;
 
 public class DefaultJPAFilterDao<T> {
 
@@ -138,6 +137,9 @@ public class DefaultJPAFilterDao<T> {
 		if (javaType.isAssignableFrom(Long.class))
 			return Long.valueOf(value);
 
+		if (javaType.isAssignableFrom(Float.class))
+			return Float.valueOf(value);
+
 		if (javaType.isAssignableFrom(LocalDateTime.class))
 			return LocalDateTime.parse(value.split("\\.")[0]);
 
@@ -210,6 +212,8 @@ public class DefaultJPAFilterDao<T> {
 					return cb.isMember(LocalDate.parse(this.value.toString()), path);
 				if (path.getJavaType() == Long.class)
 					return cb.isMember(Long.parseLong(this.value.toString()), path);
+				if (path.getJavaType() == Float.class)
+					return cb.isMember(Float.parseFloat(this.value.toString()), path);
 				return cb.isMember(Integer.parseInt(this.value.toString()), path);
 			}
 
@@ -222,6 +226,8 @@ public class DefaultJPAFilterDao<T> {
 					return cb.greaterThan(path, LocalDate.parse(this.value.toString()));
 				if (path.getJavaType() == Long.class)
 					return cb.greaterThan(path, Long.parseLong(this.value.toString()));
+				if (path.getJavaType() == Float.class)
+					return cb.greaterThan(path, Float.parseFloat(this.value.toString()));
 				return cb.greaterThan(path, Integer.parseInt(this.value.toString()));
 			}
 
@@ -234,6 +240,8 @@ public class DefaultJPAFilterDao<T> {
 					return cb.greaterThanOrEqualTo(path, LocalDate.parse(this.value.toString()));
 				if (path.getJavaType() == Long.class)
 					return cb.greaterThanOrEqualTo(path, Long.parseLong(this.value.toString()));
+				if (path.getJavaType() == Float.class)
+					return cb.greaterThanOrEqualTo(path, Float.parseFloat(this.value.toString()));
 				return cb.greaterThanOrEqualTo(path, Integer.parseInt(this.value.toString()));
 			}
 
@@ -246,6 +254,8 @@ public class DefaultJPAFilterDao<T> {
 					return cb.lessThan(path, LocalDate.parse(this.value.toString()));
 				if (path.getJavaType() == Long.class)
 					return cb.lessThan(path, Long.parseLong(this.value.toString()));
+				if (path.getJavaType() == Float.class)
+					return cb.lessThan(path, Float.parseFloat(this.value.toString()));
 				return cb.lessThan(path, Integer.parseInt(this.value.toString()));
 			}
 
@@ -258,6 +268,8 @@ public class DefaultJPAFilterDao<T> {
 					return cb.lessThanOrEqualTo(path, LocalDate.parse(this.value.toString()));
 				if (path.getJavaType() == Long.class)
 					return cb.lessThanOrEqualTo(path, Long.parseLong(this.value.toString()));
+				if (path.getJavaType() == Float.class)
+					return cb.lessThanOrEqualTo(path, Float.parseFloat(this.value.toString()));
 				return cb.lessThanOrEqualTo(path, Integer.parseInt(this.value.toString()));
 			}
 		}
