@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>it.osys</groupId>
   <artifactId>jaxrs-odata</artifactId>
-  <version>1.2.6-SNAPSHOT</version>
+  <version>1.2.6</version>
   <packaging>jar</packaging>
 
   <name>Simple OData implementation for JAX-RS and JPA</name>
@@ -21,7 +21,7 @@
   <scm>
     <connection>scm:git:git@github.com:dometec/jaxrs-odata.git</connection>
     <url>https://github.com/dometec/jaxrs-odata</url>
-    <tag>HEAD</tag>
+    <tag>jaxrs-odata-1.2.6</tag>
   </scm>
 
   <properties>
