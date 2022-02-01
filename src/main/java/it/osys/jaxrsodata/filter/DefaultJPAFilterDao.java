@@ -3,22 +3,18 @@ package it.osys.jaxrsodata.filter;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaBuilder.In;
-import javax.persistence.criteria.Join;
-import javax.persistence.criteria.MapJoin;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
+import it.osys.jaxrsodata.OData;
 import it.osys.jaxrsodata.antlr4.ODataFilterParser.ExprContext;
-import it.osys.jaxrsodata.exceptions.FormatExceptionException;
 
 public class DefaultJPAFilterDao<T> {
 
@@ -97,7 +93,7 @@ public class DefaultJPAFilterDao<T> {
 				this.field = this.context.getChild(indexField).getText();
 				this.value = this.context.getChild(indexValue).getText().replace("'", "");
 
-				Path<Object> path = getPathFromField(this.field.toString());
+				Path<Object> path = OData.getPathFromField(this.root, this.field.toString());
 				this.value = convValueToFieldType(path, this.value.toString().replace("'", ""));
 
 			}
@@ -172,7 +168,7 @@ public class DefaultJPAFilterDao<T> {
 
 		if (this.context != null) {
 
-			Path path = getPathFromField(this.field.toString());
+			Path path = OData.getPathFromField(this.root, this.field.toString());
 
 			if (this.context.NULL() != null) {
 				if (this.context.EQ() != null) {
@@ -276,51 +272,6 @@ public class DefaultJPAFilterDao<T> {
 
 		return null;
 
-	}
-
-	private Path<Object> getPathFromField(String field) {
-		String[] fieldname = field.split("/");
-		Path<Object> path = null;
-		for (int idx = 0; idx < fieldname.length; idx++) {
-
-			String attributeName = fieldname[idx];
-
-			if (path != null) {
-				path = path.get(attributeName);
-			} else {
-				path = root.get(attributeName);
-			}
-
-			if ((fieldname.length - 1) > idx) {
-
-				if (path.getJavaType().isAssignableFrom(Set.class)) {
-
-					Optional<Join<T, ?>> opJoin = root.getJoins().stream().filter(p -> p.getAttribute().getName().equals(attributeName))
-							.findFirst();
-					Join<T, ?> join = opJoin.orElseGet(() -> root.join(attributeName));
-					path = join.get(fieldname[++idx]);
-
-				}
-
-				if (path.getJavaType().isAssignableFrom(Map.class)) {
-
-					Optional<Join<T, ?>> opJoin = root.getJoins().stream().filter(p -> p.getAttribute().getName().equals(attributeName))
-							.findFirst();
-					MapJoin join = (MapJoin) opJoin.orElseGet(() -> root.join(attributeName));
-					String f = fieldname[++idx];
-					if (f.equals("key"))
-						path = join.key();
-					else if (f.equals("value"))
-						path = join.value();
-					else
-						throw new FormatExceptionException("Only key or value you can specify in a map filter, got: " + f);
-
-				}
-			}
-
-		}
-
-		return path;
 	}
 
 }

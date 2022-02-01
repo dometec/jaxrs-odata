@@ -22,6 +22,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
+import org.hibernate.annotations.Formula;
+
 import it.osys.jaxrsodata.entity.enums.TestEnumEntity;
 
 @Entity
@@ -40,6 +42,14 @@ public class TestEntity implements InternalDateEnable, Serializable {
 	@CollectionTable(name = "entity_names", joinColumns = @JoinColumn(name = "entity_id", referencedColumnName = "id"))
 	@Column(name = "name", length = 50, nullable = false)
 	private Map<Language, String> name;
+
+	@Column(name = "enName")
+	@Formula("(select en.name from entity_names en where en.entity_id = id and en.langcode = 'EN')")
+	private String enName;
+
+	@Column(name = "transName")
+	@Formula("(select en.name from entity_names en where en.entity_id = id and en.langcode = '{CURRENT_LANGUAGE}')")
+	private String transName;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "enum_type", nullable = false, length = 20)
@@ -104,6 +114,18 @@ public class TestEntity implements InternalDateEnable, Serializable {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public Map<Language, String> getName() {
+		return name;
+	}
+
+	public String getEnName() {
+		return enName;
+	}
+
+	public String getTransName() {
+		return transName;
 	}
 
 	public TestEnumEntity getEnumType() {

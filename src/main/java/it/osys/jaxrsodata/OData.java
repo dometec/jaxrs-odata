@@ -1,12 +1,18 @@
 package it.osys.jaxrsodata;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.MapJoin;
 import javax.persistence.criteria.Order;
+import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
@@ -18,6 +24,7 @@ import it.osys.jaxrsodata.antlr4.ODataFilterParser;
 import it.osys.jaxrsodata.antlr4.ODataFilterParser.ExprContext;
 import it.osys.jaxrsodata.antlr4.ODataOrderByLexer;
 import it.osys.jaxrsodata.antlr4.ODataOrderByParser;
+import it.osys.jaxrsodata.exceptions.FormatExceptionException;
 import it.osys.jaxrsodata.filter.DefaultJPAFilterVisitor;
 import it.osys.jaxrsodata.filter.JPAFilterVisitor;
 import it.osys.jaxrsodata.orderby.DefaultJPAOrderVisitor;
@@ -76,7 +83,7 @@ public class OData<T> {
 
 		visitorFilter.setCb(cb);
 		visitorFilter.setEntityManager(em);
-		visitorFilter.setRoot(root);		
+		visitorFilter.setRoot(root);
 		if (queryOptions.filter != null && !queryOptions.filter.isEmpty())
 			query.where(createWherePredicate(visitorFilter, queryOptions.filter));
 
@@ -157,6 +164,52 @@ public class OData<T> {
 
 		return (Predicate) visitor.visit(context);
 
+	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public static <T> Path<Object> getPathFromField(Root<T> root, String field) {
+		String[] fieldname = field.split("/");
+		Path<Object> path = null;
+		for (int idx = 0; idx < fieldname.length; idx++) {
+
+			String attributeName = fieldname[idx];
+
+			if (path != null) {
+				path = path.get(attributeName);
+			} else {
+				path = root.get(attributeName);
+			}
+
+			if ((fieldname.length - 1) > idx) {
+
+				if (path.getJavaType().isAssignableFrom(Set.class)) {
+
+					Optional<Join<T, ?>> opJoin = root.getJoins().stream().filter(p -> p.getAttribute().getName().equals(attributeName))
+							.findFirst();
+					Join<T, ?> join = opJoin.orElseGet(() -> root.join(attributeName));
+					path = join.get(fieldname[++idx]);
+
+				}
+
+				if (path.getJavaType().isAssignableFrom(Map.class)) {
+
+					Optional<Join<T, ?>> opJoin = root.getJoins().stream().filter(p -> p.getAttribute().getName().equals(attributeName))
+							.findFirst();
+					MapJoin join = (MapJoin) opJoin.orElseGet(() -> root.join(attributeName));
+					String f = fieldname[++idx];
+					if (f.equals("key"))
+						path = join.key();
+					else if (f.equals("value"))
+						path = join.value();
+					else
+						throw new FormatExceptionException("Only key or value you can specify in a map filter, got: " + f);
+
+				}
+			}
+
+		}
+
+		return path;
 	}
 
 }
