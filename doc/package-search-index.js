@@ -1,1 +1,0 @@
-packageSearchIndex = [{"l":"All Packages","url":"allpackages-index.html"},{"l":"it.osys.jaxrsodata.antlr4"},{"l":"it.osys.jaxrsodata.entity"},{"l":"it.osys.jaxrsodata.entity.enums"},{"l":"it.osys.jaxrsodata.exceptions"},{"l":"it.osys.jaxrsodata.filter"},{"l":"it.osys.jaxrsodata.orderby"}]
