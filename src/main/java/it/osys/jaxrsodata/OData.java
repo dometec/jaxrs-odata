@@ -35,25 +35,46 @@ import it.osys.jaxrsodata.orderby.JPAOrderVisitor;
  * QueryOption
  *
  * @param <T> Entity class
+ * 
+ * @author Domenico Briganti
  */
 public class OData<T> {
 
+	/** The em. */
 	private EntityManager em;
+	
+	/** The entity class. */
 	private Class<T> entityClass;
+	
+	/** The visitor filter. */
 	private JPAFilterVisitor<T> visitorFilter = new DefaultJPAFilterVisitor<T>();
+	
+	/** The visitor order. */
 	private JPAOrderVisitor<T> visitorOrder = new DefaultJPAOrderVisitor<T>();
 
-	/** I need the class since I can't rely on to Reflection to get the Generic Type
-	 * @param clazz The Entity class 
-	 **/
+	/**
+	 *  I need the class since I can't rely on to Reflection to get the Generic Type.
+	 *
+	 * @param clazz The Entity class
+	 */
 	public OData(Class<T> clazz) {
 		entityClass = clazz;
 	}
 
+	/**
+	 * Sets the visitor filter.
+	 *
+	 * @param visitorFilter the new visitor filter
+	 */
 	public void setVisitorFilter(JPAFilterVisitor<T> visitorFilter) {
 		this.visitorFilter = visitorFilter;
 	}
 
+	/**
+	 * Sets the visitor order by.
+	 *
+	 * @param visitorOrderBy the new visitor order by
+	 */
 	public void setVisitorOrderBy(JPAOrderVisitor<T> visitorOrderBy) {
 		this.visitorOrder = visitorOrderBy;
 	}
@@ -166,6 +187,14 @@ public class OData<T> {
 
 	}
 
+	/**
+	 * Gets the path from field.
+	 *
+	 * @param <T> the generic type
+	 * @param root the root
+	 * @param field the field
+	 * @return the path from field
+	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static <T> Path<Object> getPathFromField(Root<T> root, String field) {
 		String[] fieldname = field.split("/");
