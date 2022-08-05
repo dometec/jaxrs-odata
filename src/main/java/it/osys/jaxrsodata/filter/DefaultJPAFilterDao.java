@@ -16,21 +16,36 @@ import javax.persistence.criteria.Root;
 import it.osys.jaxrsodata.OData;
 import it.osys.jaxrsodata.antlr4.ODataFilterParser.ExprContext;
 
+/**
+ * The Class DefaultJPAFilterDao.
+ *
+ * @param <T> the generic type
+ * 
+ * @author Domenico Briganti
+ */
 public class DefaultJPAFilterDao<T> {
 
+	/** The context. */
 	private ExprContext context;
 
+	/** The root. */
 	private Root<T> root;
+	
+	/** The cb. */
 	private CriteriaBuilder cb;
 
+	/** The value. */
 	private Object value;
+	
+	/** The field. */
 	private Object field;
 
+	/** The em. */
 	private EntityManager em;
 
 	/**
-	 * Set JPA root
-	 * 
+	 * Set JPA root.
+	 *
 	 * @param root The Root entity
 	 */
 	public void setRoot(Root<T> root) {
@@ -38,21 +53,26 @@ public class DefaultJPAFilterDao<T> {
 	}
 
 	/**
-	 * Set CriteriaBuilder
-	 * 
+	 * Set CriteriaBuilder.
+	 *
 	 * @param cb the Criteria Builder
 	 */
 	public void setCb(CriteriaBuilder cb) {
 		this.cb = cb;
 	}
 
+	/**
+	 * Sets the em.
+	 *
+	 * @param em the new em
+	 */
 	public void setEm(EntityManager em) {
 		this.em = em;
 	}
 
 	/**
-	 * Setup this class by passing the context
-	 * 
+	 * Setup this class by passing the context.
+	 *
 	 * @param context The ANTLR Context
 	 */
 	public void setup(ExprContext context) {
@@ -105,9 +125,9 @@ public class DefaultJPAFilterDao<T> {
 	 * When is requested to make some filtering on db query we need to check the
 	 * value (String) against the field on db. In order to do this the value
 	 * must be converted to the same type of the field.
-	 * 
-	 * @param clazz
-	 * @param value
+	 *
+	 * @param path the path
+	 * @param value the value
 	 * @return Typed value.
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })

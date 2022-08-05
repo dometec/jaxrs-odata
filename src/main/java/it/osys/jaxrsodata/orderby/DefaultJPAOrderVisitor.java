@@ -7,21 +7,47 @@ import javax.persistence.criteria.Root;
 import it.osys.jaxrsodata.OData;
 import it.osys.jaxrsodata.antlr4.ODataOrderByParser.ExprContext;
 
+/**
+ * The Class DefaultJPAOrderVisitor.
+ *
+ * @param <T> the generic type
+ * 
+ * @author Domenico Briganti
+ */
 public class DefaultJPAOrderVisitor<T> implements JPAOrderVisitor<T> {
 
+	/** The root. */
 	private Root<T> root;
+	
+	/** The cb. */
 	private CriteriaBuilder cb;
 
+	/**
+	 * Sets the root.
+	 *
+	 * @param root the new root
+	 */
 	@Override
 	public void setRoot(Root<T> root) {
 		this.root = root;
 	}
 
+	/**
+	 * Sets the cb.
+	 *
+	 * @param cb the new cb
+	 */
 	@Override
 	public void setCb(CriteriaBuilder cb) {
 		this.cb = cb;
 	}
 
+	/**
+	 * Visit.
+	 *
+	 * @param context the context
+	 * @return the object
+	 */
 	@Override
 	public Object visit(ExprContext context) {
 
