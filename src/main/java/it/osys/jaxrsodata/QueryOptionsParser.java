@@ -81,7 +81,7 @@ public class QueryOptionsParser {
 
 		queryOptions = from(queryParameters);
 
-		if (queryOptions.orderby != null && !queryOptions.orderby.isBlank()) {
+		if (queryOptions.orderby != null && !queryOptions.orderby.trim().equals("")) {
 			Pattern pattern = Pattern.compile("(?<= |\\b)" + fieldId + "(?= |\\b)");
 			Matcher match = pattern.matcher(queryOptions.orderby);
 
