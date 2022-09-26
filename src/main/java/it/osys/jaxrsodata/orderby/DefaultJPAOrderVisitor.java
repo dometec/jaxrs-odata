@@ -7,10 +7,7 @@ import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Root;
 
-import org.antlr.v4.runtime.tree.ParseTree;
-
 import it.osys.jaxrsodata.OData;
-import it.osys.jaxrsodata.antlr4.ODataOrderByParser;
 import it.osys.jaxrsodata.antlr4.ODataOrderByParser.ExprContext;
 
 /**
@@ -52,7 +49,7 @@ public class DefaultJPAOrderVisitor<T> implements JPAOrderVisitor<T> {
 	 * Visit.
 	 *
 	 * @param context the context
-	 * @return the object
+	 * @param orders the list where Order are added
 	 */
 	@Override
 	public void visit(ExprContext context, List<Order> orders) {

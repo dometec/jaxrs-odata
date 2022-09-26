@@ -21,7 +21,7 @@ public interface JPAOrderVisitor<T> {
 	 * Visit.
 	 *
 	 * @param context the context
-	 * @return the object
+	 * @param orders the list where Order are added
 	 */
 	void visit(ExprContext context, List<Order> orders);
 
