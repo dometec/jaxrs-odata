@@ -1,5 +1,6 @@
 package it.osys.jaxrsodata;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -155,15 +156,19 @@ public class OData<T> {
 	 *            the order
 	 * @return the order
 	 */
-	public Order createOrderPredicate(JPAOrderVisitor<T> visitor, String order) {
+	public List<Order> createOrderPredicate(JPAOrderVisitor<T> visitor, String order) {
 
+		List<Order> out = new ArrayList<>();
+		
 		final ODataOrderByLexer lexer = new ODataOrderByLexer(CharStreams.fromString(order));
 		final CommonTokenStream tokens = new CommonTokenStream(lexer);
 		final ODataOrderByParser parser = new ODataOrderByParser(tokens);
 
 		final ODataOrderByParser.ExprContext context = parser.expr();
-
-		return (Order) visitor.visit(context);
+		
+		visitor.visit(context, out);
+		
+		return out;
 	}
 
 	/**

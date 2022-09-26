@@ -1,10 +1,16 @@
 package it.osys.jaxrsodata.orderby;
 
+import java.util.List;
+
 import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Root;
 
+import org.antlr.v4.runtime.tree.ParseTree;
+
 import it.osys.jaxrsodata.OData;
+import it.osys.jaxrsodata.antlr4.ODataOrderByParser;
 import it.osys.jaxrsodata.antlr4.ODataOrderByParser.ExprContext;
 
 /**
@@ -18,7 +24,7 @@ public class DefaultJPAOrderVisitor<T> implements JPAOrderVisitor<T> {
 
 	/** The root. */
 	private Root<T> root;
-	
+
 	/** The cb. */
 	private CriteriaBuilder cb;
 
@@ -49,18 +55,20 @@ public class DefaultJPAOrderVisitor<T> implements JPAOrderVisitor<T> {
 	 * @return the object
 	 */
 	@Override
-	public Object visit(ExprContext context) {
+	public void visit(ExprContext context, List<Order> orders) {
 
 		if (context.getChild(0) == null)
-			return null;
+			return;
 
-		String fields = context.getChild(0).getText();
+		String fields = context.FIELD().getText();
 		Path<Object> path = OData.getPathFromField(root, fields);
-
 		if (context.DESC() != null)
-			return cb.desc(path);
+			orders.add(cb.desc(path));
+		else
+			orders.add(cb.asc(path));
 
-		return cb.asc(path);
+		if (context.expr() != null)
+			visit(context.expr(), orders);
 
 	}
 

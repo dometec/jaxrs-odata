@@ -1,6 +1,9 @@
 package it.osys.jaxrsodata.orderby;
 
+import java.util.List;
+
 import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Root;
 
 import it.osys.jaxrsodata.antlr4.ODataOrderByParser.ExprContext;
@@ -20,7 +23,7 @@ public interface JPAOrderVisitor<T> {
 	 * @param context the context
 	 * @return the object
 	 */
-	Object visit(ExprContext context);
+	void visit(ExprContext context, List<Order> orders);
 
 	/**
 	 * Sets the root.

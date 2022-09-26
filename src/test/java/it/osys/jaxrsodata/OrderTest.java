@@ -55,6 +55,17 @@ public class OrderTest extends HSQLDBInitialize {
 	}
 
 	@Test
+	public void getMultipleOrderBy() {
+		String orderby = "stringType1 desc, stringType4 asc";
+		List<TestEntity> result = getOrderedResults(orderby);
+		Assert.assertEquals(4, result.size());
+		Assert.assertEquals(4l, result.get(0).getId().longValue());
+		Assert.assertEquals(2l, result.get(1).getId().longValue());
+		Assert.assertEquals(3l, result.get(2).getId().longValue());
+		Assert.assertEquals(1l, result.get(3).getId().longValue());
+	}
+
+	@Test
 	public void getOrderByASCInnerField() {
 		String orderby = "address/city asc";
 		List<TestEntity> result = getOrderedResults(orderby);
