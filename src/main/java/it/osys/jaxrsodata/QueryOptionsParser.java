@@ -77,9 +77,7 @@ public class QueryOptionsParser {
 	 */
 	public static QueryOptions from(MultivaluedMap<String, String> queryParameters, String fieldId) {
 
-		QueryOptions queryOptions = new QueryOptions();
-
-		queryOptions = from(queryParameters);
+		QueryOptions queryOptions = from(queryParameters);
 
 		if (queryOptions.orderby != null && !queryOptions.orderby.trim().equals("")) {
 			Pattern pattern = Pattern.compile("(?<= |\\b)" + fieldId + "(?= |\\b)");
