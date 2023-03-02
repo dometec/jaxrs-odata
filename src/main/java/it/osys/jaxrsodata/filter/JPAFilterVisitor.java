@@ -1,8 +1,8 @@
 package it.osys.jaxrsodata.filter;
 
-import javax.persistence.EntityManager;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.Root;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.Root;
 
 import it.osys.jaxrsodata.antlr4.ODataFilterParser.ExprContext;
 

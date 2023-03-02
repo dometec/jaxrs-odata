@@ -10,8 +10,8 @@
   
       <property name="hibernate.ejb.interceptor" value="it.osys.jaxrsodata.CurrentLanguageInterceptor" />
 
-      <property name="javax.persistence.jdbc.url" value="jdbc:hsqldb:mem:testdb;shutdown=false" />
-      <property name="javax.persistence.jdbc.driver" value="org.hsqldb.jdbcDriver" />
+      <property name="jakarta.persistence.jdbc.url" value="jdbc:hsqldb:mem:testdb;shutdown=false" />
+      <property name="jakarta.persistence.jdbc.driver" value="org.hsqldb.jdbcDriver" />
       <property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect" />
 
       <property name="hibernate.hbm2ddl.auto" value="create" />

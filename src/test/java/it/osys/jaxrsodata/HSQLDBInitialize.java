@@ -3,9 +3,9 @@ package it.osys.jaxrsodata;
 import java.io.InputStream;
 import java.sql.SQLException;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Persistence;
 
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.database.DatabaseConfig;
@@ -35,12 +35,12 @@ public class HSQLDBInitialize extends OData<TestEntity> {
 	}
 
 	@BeforeAll
-	public static void init() throws HibernateException, DatabaseUnitException {
+	public static void init() throws HibernateException, DatabaseUnitException, SQLException {
 
 		emf = Persistence.createEntityManagerFactory("test_persistence_unit");
 		em = emf.createEntityManager();
 
-		connection = new DatabaseConnection(((SessionImpl) (em.getDelegate())).connection());
+		connection = new DatabaseConnection(((SessionImpl) (em.getDelegate())).getJdbcConnectionAccess().obtainConnection());
 		connection.getConfig().setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new HsqldbDataTypeFactory());
 
 		FlatXmlDataSetBuilder flatXmlDataSetBuilder = new FlatXmlDataSetBuilder();

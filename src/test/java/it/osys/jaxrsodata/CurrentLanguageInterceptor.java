@@ -12,11 +12,12 @@ public class CurrentLanguageInterceptor extends EmptyInterceptor {
 		threadLocalValue.set(lang);
 	}
 
+/*
 	@Override
 	public String onPrepareStatement(String sql) {
 		CharSequence lang = threadLocalValue.get() == null ? "" : threadLocalValue.get();
 		System.err.println(lang);
 		return sql.replace("{CURRENT_LANGUAGE}", lang);
 	}
-
+*/
 }

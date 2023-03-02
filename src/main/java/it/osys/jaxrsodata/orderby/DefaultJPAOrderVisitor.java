@@ -2,10 +2,10 @@ package it.osys.jaxrsodata.orderby;
 
 import java.util.List;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.Order;
-import javax.persistence.criteria.Path;
-import javax.persistence.criteria.Root;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.Order;
+import jakarta.persistence.criteria.Path;
+import jakarta.persistence.criteria.Root;
 
 import it.osys.jaxrsodata.OData;
 import it.osys.jaxrsodata.antlr4.ODataOrderByParser.ExprContext;

@@ -84,7 +84,7 @@ Output compliant to OData Specification
 +------------------------------------------+
 import java.util.Collection;
 
-import javax.json.bind.annotation.JsonbProperty;
+import jakarta.json.bind.annotation.JsonbProperty;
 
 public class ResultSet<T> {
 

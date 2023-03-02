@@ -1,6 +1,6 @@
 package it.osys.jaxrsodata.entity;
 
-import javax.persistence.Embeddable;
+import jakarta.persistence.Embeddable;
 
 @Embeddable
 public class TestEmbeddedEntity {
