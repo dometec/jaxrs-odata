@@ -53,6 +53,7 @@ public class HSQLDBInitialize extends OData<TestEntity> {
 	@BeforeEach
 	public void cleanDB() throws DatabaseUnitException, SQLException {
 		DatabaseOperation.CLEAN_INSERT.execute(connection, dataset);
+		connection.getConnection().commit();
 	}
 
 	@AfterAll

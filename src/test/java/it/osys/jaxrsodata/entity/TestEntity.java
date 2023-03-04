@@ -22,8 +22,6 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
 
-import org.hibernate.annotations.Formula;
-
 import it.osys.jaxrsodata.entity.enums.TestEnumEntity;
 
 @Entity
@@ -44,11 +42,9 @@ public class TestEntity implements InternalDateEnable, Serializable {
 	private Map<Language, String> name;
 
 	@Column(name = "enName")
-	@Formula("(select en.name from entity_names en where en.entity_id = id and en.langcode = 'EN')")
 	private String enName;
 
 	@Column(name = "transName")
-	@Formula("(select en.name from entity_names en where en.entity_id = id and en.langcode = '{CURRENT_LANGUAGE}')")
 	private String transName;
 
 	@Enumerated(EnumType.STRING)
