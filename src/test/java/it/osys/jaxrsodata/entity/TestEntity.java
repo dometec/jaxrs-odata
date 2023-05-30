@@ -8,21 +8,19 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import javax.persistence.CollectionTable;
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.MapKeyJoinColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Version;
-
-import org.hibernate.annotations.Formula;
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.MapKeyJoinColumn;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import jakarta.persistence.Version;
 
 import it.osys.jaxrsodata.entity.enums.TestEnumEntity;
 
@@ -44,11 +42,9 @@ public class TestEntity implements InternalDateEnable, Serializable {
 	private Map<Language, String> name;
 
 	@Column(name = "enName")
-	@Formula("(select en.name from entity_names en where en.entity_id = id and en.langcode = 'EN')")
 	private String enName;
 
 	@Column(name = "transName")
-	@Formula("(select en.name from entity_names en where en.entity_id = id and en.langcode = '{CURRENT_LANGUAGE}')")
 	private String transName;
 
 	@Enumerated(EnumType.STRING)
