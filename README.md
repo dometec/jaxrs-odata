@@ -26,15 +26,25 @@ The parameters can be taken directly from an JAX-RS Endpoint using the utility c
 
 # Installations
 
-Add the library as dependency:
+Add the library as dependency, for Java 8+ and Java EE usa a 1.X.X version:
 
 ```
 <dependency>
   <groupId>it.osys</groupId>
   <artifactId>jaxrs-odata</artifactId>
-  <version>1.2.0</version>
+  <version>1.2.9</version>
 </dependency>
 ```
+
+For Java 11+ and Jakarta EE use a 2.x.x version:
+```
+<dependency>
+  <groupId>it.osys</groupId>
+  <artifactId>jaxrs-odata</artifactId>
+  <version>2.0.0</version>
+</dependency>
+```
+
 
 # Usage
 
