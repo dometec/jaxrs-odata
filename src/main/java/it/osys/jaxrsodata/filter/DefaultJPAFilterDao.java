@@ -30,13 +30,13 @@ public class DefaultJPAFilterDao<T> {
 
 	/** The root. */
 	private Root<T> root;
-	
+
 	/** The cb. */
 	private CriteriaBuilder cb;
 
 	/** The value. */
 	private Object value;
-	
+
 	/** The field. */
 	private Object field;
 
@@ -97,6 +97,11 @@ public class DefaultJPAFilterDao<T> {
 
 				this.field = this.context.getChild(indexField + 2).getText();
 				this.value = this.context.getChild(indexValue + 2).getText().replace("'", "");
+
+			} else if (this.context.LENGTH() != null && this.context.children.size() == 6) {
+
+				this.field = this.context.getChild(indexField + 2).getText();
+				this.value = Integer.parseInt(this.context.NUMBER().get(0).getText());
 
 			} else if (this.context.IN() != null) {
 
@@ -199,6 +204,10 @@ public class DefaultJPAFilterDao<T> {
 
 			if (context.CONTAINS() != null) {
 				return cb.like(path.as(String.class), "%" + this.value.toString() + "%");
+			}
+
+			if (context.LENGTH() != null && this.context.children.size() == 6) {
+				return cb.equal(cb.size(path), (Integer) this.value);
 			}
 
 			if (this.context.EQ() != null) {

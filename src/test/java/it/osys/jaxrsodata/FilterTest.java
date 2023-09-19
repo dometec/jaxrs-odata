@@ -5,13 +5,12 @@ import java.util.List;
 
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 import it.osys.jaxrsodata.entity.TestEntity;
 import it.osys.jaxrsodata.entity.enums.TestEnumEntity;
 
-@RunWith(JUnitPlatform.class)
+@Suite
 public class FilterTest extends HSQLDBInitialize {
 
 	private List<TestEntity> getFilteredResults(String filter) {
@@ -541,6 +540,37 @@ public class FilterTest extends HSQLDBInitialize {
 	}
 
 	@Test
+	public void testLengthInCollection1a() {
+		String filter = "length(ownerids) eq 3";
+		List<TestEntity> result = getFilteredResults(filter);
+		Assert.assertEquals(0, result.size());
+	}
+
+	@Test
+	public void testLengthInCollection1b() {
+		String filter = "length(ownerids) eq 1";
+		List<TestEntity> result = getFilteredResults(filter);
+		Assert.assertEquals(1, result.size());
+		Assert.assertEquals(Long.valueOf(3), result.get(0).getId());
+	}
+
+	@Test
+	public void testLengthInCollection1c() {
+		String filter = "length(ownerids) eq 2";
+		List<TestEntity> result = getFilteredResults(filter);
+		Assert.assertEquals(1, result.size());
+		Assert.assertEquals(Long.valueOf(1), result.get(0).getId());
+	}
+	
+	@Test
+	public void testLengthInCollection1d() {
+		String filter = "length(ownerids) eq 1";
+		List<TestEntity> result = getFilteredResults(filter);
+		Assert.assertEquals(1, result.size());
+		Assert.assertEquals(Long.valueOf(3), result.get(0).getId());
+	}
+	
+	@Test
 	public void testInOrHasString() {
 		String filter = "address/city in ('citta1', 'citta2') or ownerids has 3";
 		List<TestEntity> result = getFilteredResults(filter);
@@ -571,30 +601,31 @@ public class FilterTest extends HSQLDBInitialize {
 		Assert.assertEquals("DISTRIBUTION_NAME_UP", result.get(0).getStringType2());
 	}
 
-/*	@Test
-	public void getValueFieldOfMap() {
-		String filter = "name/value eq = 'Aplicación uno traductor'";
-		List<TestEntity> result = getFilteredResults(filter);
-		Assert.assertEquals(1, result.size());
-		Assert.assertEquals("distribution_name", result.get(0).getStringType2());
-	}*/
+	/*
+	 * @Test public void getValueFieldOfMap() { String filter =
+	 * "name/value eq = 'Aplicación uno traductor'"; List<TestEntity> result =
+	 * getFilteredResults(filter); Assert.assertEquals(1, result.size());
+	 * Assert.assertEquals("distribution_name", result.get(0).getStringType2());
+	 * }
+	 */
 
-/*	@Test
-	public void getKeyFieldOfMap() {
-		String filter = "name/key eq 'ES'";
-		List<TestEntity> result = getFilteredResults(filter);
-		Assert.assertEquals(2, result.size());
-		Assert.assertEquals("distribution_name", result.get(0).getStringType2());
-		Assert.assertEquals("DISTRIBUTION_NAME_UP", result.get(1).getStringType2());
-	}*/
+	/*
+	 * @Test public void getKeyFieldOfMap() { String filter =
+	 * "name/key eq 'ES'"; List<TestEntity> result = getFilteredResults(filter);
+	 * Assert.assertEquals(2, result.size());
+	 * Assert.assertEquals("distribution_name", result.get(0).getStringType2());
+	 * Assert.assertEquals("DISTRIBUTION_NAME_UP",
+	 * result.get(1).getStringType2()); }
+	 */
 
-/*	@Test
-	public void getKeyAndValueFieldOfMap() {
-		String filter = "name/key eq 'ES' and name/value eq = 'Aplicación uno traductor'";
-		List<TestEntity> result = getFilteredResults(filter);
-		Assert.assertEquals(1, result.size());
-		Assert.assertEquals("distribution_name", result.get(0).getStringType2());
-	}*/
+	/*
+	 * @Test public void getKeyAndValueFieldOfMap() { String filter =
+	 * "name/key eq 'ES' and name/value eq = 'Aplicación uno traductor'";
+	 * List<TestEntity> result = getFilteredResults(filter);
+	 * Assert.assertEquals(1, result.size());
+	 * Assert.assertEquals("distribution_name", result.get(0).getStringType2());
+	 * }
+	 */
 
 	@Test
 	public void throwExceptionWhenFilterEmpty() {
