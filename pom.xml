@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>it.osys</groupId>
   <artifactId>jaxrs-odata</artifactId>
-  <version>1.2.9</version>
+  <version>1.2.10-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>Simple OData implementation for JAX-RS and JPA</name>

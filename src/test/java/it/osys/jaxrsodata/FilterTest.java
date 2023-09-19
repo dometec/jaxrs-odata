@@ -541,6 +541,37 @@ public class FilterTest extends HSQLDBInitialize {
 	}
 
 	@Test
+	public void testLengthInCollection1a() {
+		String filter = "length(ownerids) eq 3";
+		List<TestEntity> result = getFilteredResults(filter);
+		Assert.assertEquals(0, result.size());
+	}
+
+	@Test
+	public void testLengthInCollection1b() {
+		String filter = "length(ownerids) eq 1";
+		List<TestEntity> result = getFilteredResults(filter);
+		Assert.assertEquals(1, result.size());
+		Assert.assertEquals(Long.valueOf(3), result.get(0).getId());
+	}
+
+	@Test
+	public void testLengthInCollection1c() {
+		String filter = "length(ownerids) eq 2";
+		List<TestEntity> result = getFilteredResults(filter);
+		Assert.assertEquals(1, result.size());
+		Assert.assertEquals(Long.valueOf(1), result.get(0).getId());
+	}
+	
+	@Test
+	public void testLengthInCollection1d() {
+		String filter = "length(ownerids) eq 1";
+		List<TestEntity> result = getFilteredResults(filter);
+		Assert.assertEquals(1, result.size());
+		Assert.assertEquals(Long.valueOf(3), result.get(0).getId());
+	}
+	
+	@Test
 	public void testInOrHasString() {
 		String filter = "address/city in ('citta1', 'citta2') or ownerids has 3";
 		List<TestEntity> result = getFilteredResults(filter);
