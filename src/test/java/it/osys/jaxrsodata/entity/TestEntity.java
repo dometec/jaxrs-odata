@@ -17,6 +17,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.MapKeyJoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -88,6 +89,9 @@ public class TestEntity implements InternalDateEnable, Serializable {
 	private Set<Integer> ownerids;
 
 	private TestEmbeddedEntity address;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	private TestSingleEntitySub subsinglentity;
 
 	@OneToMany(mappedBy = "parent")
 	private Set<TestEntitySub> subentities;

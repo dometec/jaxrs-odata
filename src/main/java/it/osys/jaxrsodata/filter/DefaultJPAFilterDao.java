@@ -118,7 +118,7 @@ public class DefaultJPAFilterDao<T> {
 				this.field = this.context.getChild(indexField).getText();
 				this.value = this.context.getChild(indexValue).getText().replace("'", "");
 
-				Path<Object> path = OData.getPathFromField(this.root, this.field.toString());
+				Path<T> path = OData.getPathFromField(this.root, this.field.toString());
 				this.value = convValueToFieldType(path, this.value.toString().replace("'", ""));
 
 			}
@@ -136,7 +136,7 @@ public class DefaultJPAFilterDao<T> {
 	 * @return Typed value.
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private Object convValueToFieldType(Path<Object> path, String value) {
+	private Object convValueToFieldType(Path<T> path, String value) {
 
 		// If i just want to check if the db field is empty just skip value
 		// casting.

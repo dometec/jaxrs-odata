@@ -58,7 +58,7 @@ public class DefaultJPAOrderVisitor<T> implements JPAOrderVisitor<T> {
 			return;
 
 		String fields = context.FIELD().getText();
-		Path<Object> path = OData.getPathFromField(root, fields);
+		Path<T> path = OData.getPathFromField(root, fields);
 		if (context.DESC() != null)
 			orders.add(cb.desc(path));
 		else

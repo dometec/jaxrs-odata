@@ -15,10 +15,14 @@ import it.osys.jaxrsodata.entity.enums.TestEnumEntity;
 public class FilterTest extends HSQLDBInitialize {
 
 	private List<TestEntity> getFilteredResults(String filter) {
+		return getFilteredResults(filter, false);
+	}
+
+	private List<TestEntity> getFilteredResults(String filter, boolean distinct) {
 		super.setEntityManager(em);
 		QueryOptions queryOptions = new QueryOptions();
 		queryOptions.filter = filter;
-		return this.get(queryOptions);
+		return this.get(queryOptions, distinct);
 	}
 
 	private long getFilteredCount(String filter) {
@@ -196,6 +200,41 @@ public class FilterTest extends HSQLDBInitialize {
 		List<TestEntity> result = getFilteredResults(filter);
 		Assert.assertEquals(4, result.size());
 		Assert.assertEquals(Long.valueOf(1), result.get(0).getId());
+	}
+
+	@Test
+	public void getSubEmbedFieldCONTAINSString() {
+		String filter = "contains(address/embeddedname/value, 'citt')";
+		List<TestEntity> result = getFilteredResults(filter);
+		Assert.assertEquals(0, result.size());
+	}
+
+	/**
+	 * Pay attentiont that in this test there is a join that duplicate the row returned.
+	 * See test below
+	 */
+	@Test
+	public void getSubEntityFieldCONTAINSString() {
+		String filter = "contains(subsinglentity/singlesubname/value, 'map')";
+		List<TestEntity> result = getFilteredResults(filter);
+		Assert.assertEquals(2, result.size());
+		Assert.assertEquals(Long.valueOf(1), result.get(0).getId());
+		Assert.assertEquals(Long.valueOf(1), result.get(1).getId());
+	}
+
+	@Test
+	public void getSubEntityFieldCONTAINSStringDistinct() {
+		String filter = "contains(subsinglentity/singlesubname/value, 'map')";
+		List<TestEntity> result = getFilteredResults(filter, true);
+		Assert.assertEquals(1, result.size());
+		Assert.assertEquals(Long.valueOf(1), result.get(0).getId());
+	}
+
+	@Test
+	public void getSubSingleEntityFieldCONTAINSString() {
+		String filter = "contains(subsinglentity/singlesubname/value, 'citt')";
+		List<TestEntity> result = getFilteredResults(filter);
+		Assert.assertEquals(0, result.size());
 	}
 
 	@Test
@@ -562,7 +601,7 @@ public class FilterTest extends HSQLDBInitialize {
 		Assert.assertEquals(1, result.size());
 		Assert.assertEquals(Long.valueOf(1), result.get(0).getId());
 	}
-	
+
 	@Test
 	public void testLengthInCollection1d() {
 		String filter = "length(ownerids) eq 1";
@@ -570,7 +609,7 @@ public class FilterTest extends HSQLDBInitialize {
 		Assert.assertEquals(1, result.size());
 		Assert.assertEquals(Long.valueOf(3), result.get(0).getId());
 	}
-	
+
 	@Test
 	public void testInOrHasString() {
 		String filter = "address/city in ('citta1', 'citta2') or ownerids has 3";
@@ -626,6 +665,23 @@ public class FilterTest extends HSQLDBInitialize {
 		Assert.assertEquals(1, result.size());
 		Assert.assertEquals("distribution_name", result.get(0).getStringType2());
 	}
+
+//	@Test
+//	public void getKeyFieldOfMapOnEmbedded() {
+//		String filter = "address/embeddedname/key eq 'ES'";
+//		List<TestEntity> result = getFilteredResults(filter);
+//		Assert.assertEquals(2, result.size());
+//		Assert.assertEquals("distribution_name", result.get(0).getStringType2());
+//		Assert.assertEquals("DISTRIBUTION_NAME_UP", result.get(1).getStringType2());
+//	}
+//	
+//	@Test
+//	public void getKeyAndValueFieldOfMapOnEmbedded() {
+//		String filter = "address/embeddedname/key eq 'ES' and address/embeddedname/value eq = 'Aplicación uno traductor'";
+//		List<TestEntity> result = getFilteredResults(filter);
+//		Assert.assertEquals(1, result.size());
+//		Assert.assertEquals("distribution_name", result.get(0).getStringType2());
+//	}
 
 	@Test
 	public void throwExceptionWhenFilterEmpty() {

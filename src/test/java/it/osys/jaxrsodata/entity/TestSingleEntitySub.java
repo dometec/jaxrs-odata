@@ -16,26 +16,22 @@ import javax.persistence.Table;
 import javax.persistence.Version;
 
 @Entity
-@Table(name = "test_entity_sub")
+@Table(name = "test_singleentity_sub")
 @SuppressWarnings("serial")
-public class TestEntitySub implements Serializable {
+public class TestSingleEntitySub implements Serializable {
 
 	@Id
 	@Column(name = "id", length = 100, nullable = false)
 	private Long id;
-
-	@ManyToOne
-	@JoinColumn(name = "parent")
-	private TestEntity parent;
 
 	@Column(name = "string_type_1")
 	private String stringType1;
 
 	@ElementCollection(fetch = FetchType.LAZY)
 	@MapKeyJoinColumn(name = "langcode")
-	@CollectionTable(name = "test_entity_sub_names", joinColumns = @JoinColumn(name = "entity_id", referencedColumnName = "id"))
+	@CollectionTable(name = "test_singleentity_sub_names", joinColumns = @JoinColumn(name = "entity_id", referencedColumnName = "id"))
 	@Column(name = "name", length = 50, nullable = false)
-	private Map<Language, String> name;
+	private Map<Language, String> singlesubname;
 	
 	@Version
 	private int version;
@@ -81,7 +77,7 @@ public class TestEntitySub implements Serializable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		TestEntitySub other = (TestEntitySub) obj;
+		TestSingleEntitySub other = (TestSingleEntitySub) obj;
 		if (id == null) {
 			if (other.id != null)
 				return false;

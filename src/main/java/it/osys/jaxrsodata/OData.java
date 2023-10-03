@@ -2,14 +2,13 @@ package it.osys.jaxrsodata;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.From;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.MapJoin;
 import javax.persistence.criteria.Order;
@@ -43,13 +42,13 @@ public class OData<T> {
 
 	/** The em. */
 	private EntityManager em;
-	
+
 	/** The entity class. */
 	private Class<T> entityClass;
-	
+
 	/** The visitor filter. */
 	private JPAFilterVisitor<T> visitorFilter = new DefaultJPAFilterVisitor<T>();
-	
+
 	/** The visitor order. */
 	private JPAOrderVisitor<T> visitorOrder = new DefaultJPAOrderVisitor<T>();
 
@@ -99,6 +98,10 @@ public class OData<T> {
 	 * @return the recordset
 	 */
 	public List<T> get(QueryOptions queryOptions) {
+		return get(queryOptions, false);
+	}
+
+	public List<T> get(QueryOptions queryOptions, boolean distinct) {
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<T> query = cb.createQuery(entityClass);
 		Root<T> root = query.from(entityClass);
@@ -114,6 +117,9 @@ public class OData<T> {
 
 		if (queryOptions.orderby != null && !queryOptions.orderby.isEmpty())
 			query.orderBy(createOrderPredicate(visitorOrder, queryOptions.orderby));
+
+		if (distinct)
+			query.distinct(true);
 
 		TypedQuery<T> namedQuery = em.createQuery(query);
 		namedQuery.setFirstResult(queryOptions.skip);
@@ -159,15 +165,15 @@ public class OData<T> {
 	public List<Order> createOrderPredicate(JPAOrderVisitor<T> visitor, String order) {
 
 		List<Order> out = new ArrayList<>();
-		
+
 		final ODataOrderByLexer lexer = new ODataOrderByLexer(CharStreams.fromString(order));
 		final CommonTokenStream tokens = new CommonTokenStream(lexer);
 		final ODataOrderByParser parser = new ODataOrderByParser(tokens);
 
 		final ODataOrderByParser.ExprContext context = parser.expr();
-		
+
 		visitor.visit(context, out);
-		
+
 		return out;
 	}
 
@@ -201,44 +207,42 @@ public class OData<T> {
 	 * @return the path from field
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static <T> Path<Object> getPathFromField(Root<T> root, String field) {
+	public static <T> Path<T> getPathFromField(Root<T> root, String field) {
+
 		String[] fieldname = field.split("/");
-		Path<Object> path = null;
+		Path<T> path = root;
+
 		for (int idx = 0; idx < fieldname.length; idx++) {
 
 			String attributeName = fieldname[idx];
 
-			if (path != null) {
-				path = path.get(attributeName);
-			} else {
-				path = root.get(attributeName);
-			}
-
+			// If not on last element, use join
 			if ((fieldname.length - 1) > idx) {
 
-				if (path.getJavaType().isAssignableFrom(Set.class)) {
+				From<?, T> innerroot = (From) path;
+				Optional<Join<T, ?>> opJoin = innerroot.getJoins().stream().filter(p -> p.getAttribute().getName().equals(attributeName))
+						.findFirst();
+				path = (Path<T>) opJoin.orElseGet(() -> innerroot.join(attributeName));
 
-					Optional<Join<T, ?>> opJoin = root.getJoins().stream().filter(p -> p.getAttribute().getName().equals(attributeName))
-							.findFirst();
-					Join<T, ?> join = opJoin.orElseGet(() -> root.join(attributeName));
-					path = join.get(fieldname[++idx]);
+			} else {
 
-				}
+				if (path instanceof MapJoin) {
 
-				if (path.getJavaType().isAssignableFrom(Map.class)) {
+					MapJoin mj = (MapJoin) path;
 
-					Optional<Join<T, ?>> opJoin = root.getJoins().stream().filter(p -> p.getAttribute().getName().equals(attributeName))
-							.findFirst();
-					MapJoin join = (MapJoin) opJoin.orElseGet(() -> root.join(attributeName));
-					String f = fieldname[++idx];
-					if (f.equals("key"))
-						path = join.key();
-					else if (f.equals("value"))
-						path = join.value();
+					if (attributeName.equals("key"))
+						path = mj.key();
+					else if (attributeName.equals("value"))
+						path = mj.value();
 					else
-						throw new FormatExceptionException("Only key or value you can specify in a map filter, got: " + f);
+						throw new FormatExceptionException("Only key or value you can specify in a map filter, got: " + attributeName);
+
+				} else {
+
+					path = path.get(attributeName);
 
 				}
+
 			}
 
 		}

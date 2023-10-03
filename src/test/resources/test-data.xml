@@ -9,9 +9,15 @@
 
   <languages code="ZH" language="中文" enlanguage="Chinese" />
 
+  <test_singleentity_sub id="1000" string_type_1="esempio1" version="1"/>
+
+  <test_singleentity_sub_names entity_id="1000" name="subentity map name" langcode="EN" />
+
+  <test_singleentity_sub_names entity_id="1000" name="sottoentita mappa nome" langcode="IT" />
+  
   <test_entity id="1" string_type_1="app1" string_type_2="distribution_name" string_type_4="token" boolfield="true" insert_date="2016-01-01 12:00:00"
     last_update="2017-01-01 12:00:00" localdatetime_type="2017-01-01 13:00:00" localtime_type="13:00:00" localdate_type="2017-01-01" length="0.00000001" enum_type="Enum1"
-    city="citta1" version="1" />
+    city="citta1" subsinglentity_id="1000" version="1" />
 
   <test_entity id="2" string_type_1="app2" string_type_2="distribution_name" string_type_3="string" string_type_4="token" boolfield="true"
     insert_date="2016-01-01 12:00:00" last_update="2017-01-01 12:00:00" localdatetime_type="2017-01-02 12:00:00" localtime_type="14:00:00" localdate_type="2017-01-03"
@@ -35,6 +41,18 @@
   <entity_names entity_id="2" name="Applicazione due integrazione" langcode="IT" />
 
   <entity_names entity_id="3" name="Aplicación dos integración" langcode="ES" />
+  
+  <embedded_names entity_id="1" name="Application one translator" langcode="EN" />
+
+  <embedded_names entity_id="1" name="Applicazione uno traduttore" langcode="IT" />
+
+  <embedded_names entity_id="1" name="Aplicación uno traductor" langcode="ES" />
+
+  <embedded_names entity_id="2" name="Application two integration" langcode="EN" />
+
+  <embedded_names entity_id="2" name="Applicazione due integrazione" langcode="IT" />
+
+  <embedded_names entity_id="3" name="Aplicación dos integración" langcode="ES" />
 
   <test_entity_owners id="1" owner="1" />
 
@@ -44,10 +62,10 @@
 
   <test_entity_sub id="1" parent="1" string_type_1="app1" version="1" />
 
+  <test_entity_sub id="2" parent="2" string_type_1="app1" version="1" />
+
   <test_entity_sub id="3" parent="1" string_type_1="app2" version="1" />
 
   <test_entity_sub id="4" parent="1" string_type_1="app3" version="1" />
-
-  <test_entity_sub id="2" parent="2" string_type_1="app1" version="1" />
 
 </dataset>
