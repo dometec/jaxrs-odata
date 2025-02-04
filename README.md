@@ -50,7 +50,7 @@ For Java 11+ and Jakarta EE use a 2.x.x version:
 
 In the code, create an instance of OData class passing the Entity Bean Class. Set the Entity Manager and call <getAll> method or the <count> method passing the QueryOptions.
 
-```
+```java
 OData<Author> odata = new OData<Author>(Author.class);
 odata.setEntityManager(em);
 ...
@@ -62,7 +62,7 @@ odata.count(queryOptions);
 
   With this rest Endpoint:
 
-```
+```java
 @GET
 @Path("authors")
 @Produces(MediaType.APPLICATION_JSON)
@@ -92,7 +92,7 @@ You can see many examples in the [test classes](https://github.com/dometec/jaxrs
 
 Use a bean like this to marshialing the output data:
 
-```
+```java
 import java.util.Collection;
 
 import javax.json.bind.annotation.JsonbProperty;
@@ -114,22 +114,22 @@ public class ResultSet<T> {
 
 The rest method, with the logic to output also the total record count:
 
-```
-	@GET
-	@Path("authors")
-	@Produces(MediaType.APPLICATION_JSON)
-	public ResultSet<Author> authors(UriInfo info) {
+```java
+@GET
+@Path("authors")
+@Produces(MediaType.APPLICATION_JSON)
+public ResultSet<Author> authors(UriInfo info) {
 
-		QueryOptions queryOptions = QueryOptionsParser.from(info);
+	QueryOptions queryOptions = QueryOptionsParser.from(info);
 
-		OData<Author> odata = new OData<Author>(Author.class);
-		odata.setEntityManager(em);
-		ResultSet<Author> resultSet = new ResultSet<>();
-		resultSet.value = odata.getAll(queryOptions);
-		if (queryOptions.count)
-			resultSet.count = odata.countAll(queryOptions);
-		return resultSet;
-	}
+	OData<Author> odata = new OData<Author>(Author.class);
+	odata.setEntityManager(em);
+	ResultSet<Author> resultSet = new ResultSet<>();
+	resultSet.value = odata.getAll(queryOptions);
+	if (queryOptions.count)
+		resultSet.count = odata.countAll(queryOptions);
+	return resultSet;
+}
 ```
 
 ## Enrich Open API using Eclipse Microprofile
@@ -143,7 +143,7 @@ mp.openapi.filter=it.osys.jaxrsodata.ODataParamsFilter
 
 And add this class:
   
-```
+```java
 import java.util.ArrayList;
 
 import org.eclipse.microprofile.openapi.OASFactory;
@@ -235,7 +235,7 @@ public class ODataParamsFilter implements OASFilter {
   
 And annotate the method with **@Operation**. Remember to add "odata" in his summary.
 
-```
+```java
 ...
 import org.eclipse.microprofile.openapi.annotations.Operation;
 ...
@@ -252,7 +252,7 @@ import org.eclipse.microprofile.openapi.annotations.Operation;
 
 Add this annotation:
 
-```
+```java
 package it.osys.jaxrsodata;
 
 import java.lang.annotation.ElementType;
@@ -280,7 +280,7 @@ public @interface ODataImplicitParams {
 
 And add it to Endpoint:
 
-```
+```java
 @GET
 @Path("authors")
 @ODataImplicitParams
