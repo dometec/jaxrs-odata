@@ -561,7 +561,7 @@ public class FilterTest extends HSQLDBInitialize {
 		Assert.assertEquals(1, result.size());
 		Assert.assertEquals(Long.valueOf(1), result.get(0).getId());
 	}
-	
+
 	@Test
 	public void testLengthInCollection1d() {
 		String filter = "length(ownerids) eq 1";
@@ -569,7 +569,7 @@ public class FilterTest extends HSQLDBInitialize {
 		Assert.assertEquals(1, result.size());
 		Assert.assertEquals(Long.valueOf(3), result.get(0).getId());
 	}
-	
+
 	@Test
 	public void testInOrHasString() {
 		String filter = "address/city in ('citta1', 'citta2') or ownerids has 3";
@@ -601,31 +601,30 @@ public class FilterTest extends HSQLDBInitialize {
 		Assert.assertEquals("DISTRIBUTION_NAME_UP", result.get(0).getStringType2());
 	}
 
-	/*
-	 * @Test public void getValueFieldOfMap() { String filter =
-	 * "name/value eq = 'Aplicación uno traductor'"; List<TestEntity> result =
-	 * getFilteredResults(filter); Assert.assertEquals(1, result.size());
-	 * Assert.assertEquals("distribution_name", result.get(0).getStringType2());
-	 * }
-	 */
+	@Test
+	public void getValueFieldOfMap() {
+		String filter = "name/{element} eq = 'Aplicación uno traductor'";
+		List<TestEntity> result = getFilteredResults(filter);
+		Assert.assertEquals(1, result.size());
+		Assert.assertEquals("distribution_name", result.get(0).getStringType2());
+	}
 
-	/*
-	 * @Test public void getKeyFieldOfMap() { String filter =
-	 * "name/key eq 'ES'"; List<TestEntity> result = getFilteredResults(filter);
-	 * Assert.assertEquals(2, result.size());
-	 * Assert.assertEquals("distribution_name", result.get(0).getStringType2());
-	 * Assert.assertEquals("DISTRIBUTION_NAME_UP",
-	 * result.get(1).getStringType2()); }
-	 */
+	@Test
+	public void getKeyFieldOfMap() {
+		String filter = "name/{index} eq 'ES'";
+		List<TestEntity> result = getFilteredResults(filter);
+		Assert.assertEquals(2, result.size());
+		Assert.assertEquals("distribution_name", result.get(0).getStringType2());
+		Assert.assertEquals("DISTRIBUTION_NAME_UP", result.get(1).getStringType2());
+	}
 
-	/*
-	 * @Test public void getKeyAndValueFieldOfMap() { String filter =
-	 * "name/key eq 'ES' and name/value eq = 'Aplicación uno traductor'";
-	 * List<TestEntity> result = getFilteredResults(filter);
-	 * Assert.assertEquals(1, result.size());
-	 * Assert.assertEquals("distribution_name", result.get(0).getStringType2());
-	 * }
-	 */
+	@Test
+	public void getKeyAndValueFieldOfMap() {
+		String filter = "name/{index} eq 'ES' and name/{element} eq = 'Aplicación uno traductor'";
+		List<TestEntity> result = getFilteredResults(filter);
+		Assert.assertEquals(1, result.size());
+		Assert.assertEquals("distribution_name", result.get(0).getStringType2());
+	}
 
 	@Test
 	public void throwExceptionWhenFilterEmpty() {
