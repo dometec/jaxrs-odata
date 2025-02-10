@@ -32,19 +32,27 @@ Add the library as dependency, for Java 8+ and Java EE usa a 1.X.X version:
 <dependency>
   <groupId>it.osys</groupId>
   <artifactId>jaxrs-odata</artifactId>
-  <version>1.2.9</version>
+  <version>1.2.11</version>
 </dependency>
 ```
 
-For Java 11+ and Jakarta EE use a 2.x.x version:
+For Java 11 and Jakarta EE 9/10 use a 2.x.x version:
 ```
 <dependency>
   <groupId>it.osys</groupId>
   <artifactId>jaxrs-odata</artifactId>
-  <version>2.0.0</version>
+  <version>2.2.11</version>
 </dependency>
 ```
 
+For Java 17 and Jakarta EE 11 use a 3.x.x version:
+```
+<dependency>
+  <groupId>it.osys</groupId>
+  <artifactId>jaxrs-odata</artifactId>
+  <version>3.2.11</version>
+</dependency>
+```
 
 # Usage
 
