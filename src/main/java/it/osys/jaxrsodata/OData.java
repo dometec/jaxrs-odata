@@ -107,13 +107,13 @@ public class OData<T> {
 		visitorFilter.setEntityManager(em);
 		visitorFilter.setRoot(root);
 		if (queryOptions.filter != null && !queryOptions.filter.isEmpty())
-			query.where(createWherePredicate(visitorFilter, queryOptions.filter));
+			query.where(getWherePredicate(queryOptions));
 
 		visitorOrder.setCb(cb);
 		visitorOrder.setRoot(root);
 
 		if (queryOptions.orderby != null && !queryOptions.orderby.isEmpty())
-			query.orderBy(createOrderPredicate(visitorOrder, queryOptions.orderby));
+			query.orderBy(getOrderPredicate(queryOptions));
 
 		TypedQuery<T> namedQuery = em.createQuery(query);
 		namedQuery.setFirstResult(queryOptions.skip);
@@ -121,7 +121,11 @@ public class OData<T> {
 
 		return namedQuery.getResultList();
 	}
-
+	
+	private List<Order> getOrderPredicate(QueryOptions queryOptions) {
+		return createOrderPredicate(visitorOrder, queryOptions.orderby);
+	}
+	
 	/**
 	 * Count all result.
 	 *
@@ -140,13 +144,17 @@ public class OData<T> {
 		visitorFilter.setRoot(root);
 
 		if (queryOptions.filter != null)
-			query.where(createWherePredicate(visitorFilter, queryOptions.filter));
+			query.where(getWherePredicate(queryOptions));
 
 		TypedQuery<Long> namedQuery = em.createQuery(query);
 
 		return namedQuery.getSingleResult();
 	}
-
+	
+	private Predicate getWherePredicate(QueryOptions queryOptions) {
+		return createWherePredicate(visitorFilter, queryOptions.filter);
+	}
+	
 	/**
 	 * Creates order predicate.
 	 *
