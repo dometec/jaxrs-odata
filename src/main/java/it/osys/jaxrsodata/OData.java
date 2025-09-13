@@ -99,30 +99,60 @@ public class OData<T> {
 	 * @return the recordset
 	 */
 	public List<T> get(QueryOptions queryOptions) {
-		CriteriaBuilder cb = em.getCriteriaBuilder();
-		CriteriaQuery<T> query = cb.createQuery(entityClass);
-		Root<T> root = query.from(entityClass);
-
-		visitorFilter.setCb(cb);
-		visitorFilter.setEntityManager(em);
-		visitorFilter.setRoot(root);
+		CriteriaObjects criteriaObjects = initializeCriteriaObjects();
+		
+		initializeVisitorFilter(criteriaObjects);
 		if (queryOptions.filter != null && !queryOptions.filter.isEmpty())
-			query.where(getWherePredicate(queryOptions));
-
-		visitorOrder.setCb(cb);
-		visitorOrder.setRoot(root);
-
+			criteriaObjects.query.where(getWherePredicate(queryOptions));
+		
+		initializeVisitorOrder(criteriaObjects);
+		
 		if (queryOptions.orderby != null && !queryOptions.orderby.isEmpty())
-			query.orderBy(getOrderPredicate(queryOptions));
+			criteriaObjects.query.orderBy(getOrderPredicate(queryOptions));
 
-		TypedQuery<T> namedQuery = em.createQuery(query);
+		TypedQuery<T> namedQuery = em.createQuery(criteriaObjects.query);
 		namedQuery.setFirstResult(queryOptions.skip);
 		namedQuery.setMaxResults(queryOptions.top);
 
 		return namedQuery.getResultList();
 	}
 	
+	private void initializeVisitorOrder(CriteriaObjects criteriaObjects) {
+		visitorOrder.setCb(criteriaObjects.cb);
+		visitorOrder.setRoot(criteriaObjects.root);
+	}
+	
+	private void initializeVisitorFilter(CriteriaObjects criteriaObjects) {
+		visitorFilter.setCb(criteriaObjects.cb);
+		visitorFilter.setEntityManager(em);
+		visitorFilter.setRoot(criteriaObjects.root);
+	}
+	
+	private CriteriaObjects initializeCriteriaObjects() {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<T> query = cb.createQuery(entityClass);
+		Root<T> root = query.from(entityClass);
+		CriteriaObjects<T> criteriaObjects = new CriteriaObjects(cb, query, root);
+		return criteriaObjects;
+	}
+	
+	private static class CriteriaObjects<T> {
+		public final CriteriaBuilder cb;
+		public final CriteriaQuery<T> query;
+		public final Root<T> root;
+		
+		public CriteriaObjects(CriteriaBuilder cb, CriteriaQuery<T> query, Root<T> root) {
+			this.cb = cb;
+			this.query = query;
+			this.root = root;
+		}
+	}
+	
 	private List<Order> getOrderPredicate(QueryOptions queryOptions) {
+		if (visitorOrder == null){
+			CriteriaObjects criteriaObjects = initializeCriteriaObjects();
+			initializeVisitorOrder(criteriaObjects);
+		}
 		return createOrderPredicate(visitorOrder, queryOptions.orderby);
 	}
 	
@@ -152,6 +182,10 @@ public class OData<T> {
 	}
 	
 	private Predicate getWherePredicate(QueryOptions queryOptions) {
+		if (visitorFilter == null){
+			CriteriaObjects criteriaObjects = initializeCriteriaObjects();
+			initializeVisitorFilter(criteriaObjects);
+		}
 		return createWherePredicate(visitorFilter, queryOptions.filter);
 	}
 	
