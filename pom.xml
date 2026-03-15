@@ -26,7 +26,7 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.compiler.source>11</maven.compiler.source>
+    <maven.compiler.source>17</maven.compiler.source>
     <maven.compiler.target>${maven.compiler.source}</maven.compiler.target>
   </properties>
 
@@ -78,7 +78,7 @@
       <dependency>
         <groupId>org.antlr</groupId>
         <artifactId>antlr4-runtime</artifactId>
-        <version>4.13.0</version>
+        <version>4.13.2</version>
       </dependency>
 
       <dependency>
@@ -96,7 +96,7 @@
       <dependency>
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-api</artifactId>
-        <version>2.0.7</version>
+        <version>2.0.16</version>
       </dependency>
 
     </dependencies>
@@ -130,14 +130,14 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-simple</artifactId>
-      <version>2.0.7</version>
+      <version>2.0.16</version>
       <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-engine</artifactId>
-      <version>5.10.0-M1</version>
+      <version>5.11.4</version>
       <scope>test</scope>
     </dependency>
 
@@ -145,20 +145,20 @@
       <groupId>org.junit.platform</groupId>
       <artifactId>junit-platform-runner</artifactId>
       <scope>test</scope>
-      <version>1.10.0-M1</version>
+      <version>1.11.4</version>
     </dependency>
 
     <dependency>
       <groupId>org.hsqldb</groupId>
       <artifactId>hsqldb</artifactId>
       <scope>test</scope>
-      <version>2.7.1</version>
+      <version>2.7.3</version>
     </dependency>
 
     <dependency>
       <groupId>com.mysql</groupId>
       <artifactId>mysql-connector-j</artifactId>
-      <version>8.2.0</version>
+      <version>9.1.0</version>
       <scope>test</scope>
     </dependency>
 
@@ -166,7 +166,7 @@
       <groupId>org.dbunit</groupId>
       <artifactId>dbunit</artifactId>
       <scope>test</scope>
-      <version>2.7.3</version>
+      <version>2.8.0</version>
       <exclusions>
         <exclusion>
           <groupId>org.postgresql</groupId>
@@ -179,7 +179,7 @@
     <dependency>
       <groupId>org.hibernate.orm</groupId>
       <artifactId>hibernate-core</artifactId>
-      <version>6.2.3.Final</version>
+      <version>6.6.4.Final</version>
       <scope>test</scope>
     </dependency>
 
@@ -189,7 +189,7 @@
       <artifactId>org.jacoco.agent</artifactId>
       <classifier>runtime</classifier>
       <scope>test</scope>
-      <version>0.8.10</version>
+      <version>0.8.12</version>
     </dependency>
 
   </dependencies>
@@ -202,39 +202,39 @@
       <plugins>
         <plugin>
           <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.11.0</version>
+          <version>3.13.0</version>
         </plugin>
         <plugin>
           <artifactId>maven-javadoc-plugin</artifactId>
-          <version>3.5.0</version>
+          <version>3.11.2</version>
         </plugin>
         <plugin>
           <artifactId>maven-source-plugin</artifactId>
-          <version>3.3.0</version>
+          <version>3.3.1</version>
         </plugin>
         <plugin>
           <artifactId>maven-gpg-plugin</artifactId>
-          <version>3.1.0</version>
+          <version>3.2.7</version>
         </plugin>
         <plugin>
           <artifactId>maven-project-info-reports-plugin</artifactId>
-          <version>3.4.4</version>
+          <version>3.9.0</version>
         </plugin>
         <plugin>
           <artifactId>maven-clean-plugin</artifactId>
-          <version>3.2.0</version>
+          <version>3.4.0</version>
         </plugin>
         <plugin>
           <artifactId>maven-install-plugin</artifactId>
-          <version>3.1.0</version>
+          <version>3.1.3</version>
         </plugin>
         <plugin>
           <artifactId>maven-surefire-report-plugin</artifactId>
-          <version>3.1.0</version>
+          <version>3.5.2</version>
         </plugin>
         <plugin>
           <artifactId>maven-jxr-plugin</artifactId>
-          <version>3.3.0</version>
+          <version>3.6.0</version>
         </plugin>
         <plugin>
           <artifactId>maven-resources-plugin</artifactId>
@@ -242,11 +242,11 @@
         </plugin>
         <plugin>
           <artifactId>maven-jar-plugin</artifactId>
-          <version>3.3.0</version>
+          <version>3.4.2</version>
         </plugin>
         <plugin>
           <artifactId>maven-site-plugin</artifactId>
-          <version>4.0.0-M8</version>
+          <version>4.0.0-M16</version>
           <dependencies>
             <dependency><!-- add support for ssh/scp -->
               <groupId>org.apache.maven.wagon</groupId>
@@ -257,33 +257,33 @@
         </plugin>
         <plugin>
           <artifactId>maven-deploy-plugin</artifactId>
-          <version>3.1.0</version>
+          <version>3.1.3</version>
         </plugin>
         <plugin>
           <artifactId>maven-surefire-plugin</artifactId>
-          <version>3.1.0</version>
+          <version>3.5.2</version>
         </plugin>
         <plugin>
           <artifactId>maven-scm-plugin</artifactId>
-          <version>2.0.1</version>
+          <version>2.1.0</version>
         </plugin>
         <plugin>
           <artifactId>maven-release-plugin</artifactId>
-          <version>3.0.0</version>
+          <version>3.1.1</version>
         </plugin>
         <plugin>
           <groupId>org.antlr</groupId>
           <artifactId>antlr4-maven-plugin</artifactId>
-          <version>4.13.0</version>
+          <version>4.13.2</version>
         </plugin>
         <plugin>
           <artifactId>maven-enforcer-plugin</artifactId>
-          <version>3.3.0</version>
+          <version>3.5.0</version>
         </plugin>
         <plugin>
           <groupId>org.jacoco</groupId>
           <artifactId>jacoco-maven-plugin</artifactId>
-          <version>0.8.10</version>
+          <version>0.8.12</version>
         </plugin>
         <plugin>
           <groupId>org.sonatype.central</groupId>
@@ -401,7 +401,7 @@
             <configuration>
               <rules>
                 <requireMavenVersion>
-                  <version>3.3.9</version>
+                  <version>3.9.0</version>
                 </requireMavenVersion>
               </rules>
             </configuration>
