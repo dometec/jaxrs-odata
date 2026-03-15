@@ -32,13 +32,9 @@
 
   <distributionManagement>
     <snapshotRepository>
-      <id>ossrh</id>
-      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+      <id>central</id>
+      <url>https://central.sonatype.com/repository/maven-snapshots/</url>
     </snapshotRepository>
-    <repository>
-      <id>ossrh</id>
-      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-    </repository>
     <site>
       <id>osys-docs</id>
       <url>scp://docs.osys.it/var/www/docs.osys.it/it.osys.jaxrsodata/</url>
@@ -290,9 +286,9 @@
           <version>0.8.10</version>
         </plugin>
         <plugin>
-          <groupId>org.sonatype.plugins</groupId>
-          <artifactId>nexus-staging-maven-plugin</artifactId>
-          <version>1.6.13</version>
+          <groupId>org.sonatype.central</groupId>
+          <artifactId>central-publishing-maven-plugin</artifactId>
+          <version>0.7.0</version>
         </plugin>
       </plugins>
     </pluginManagement>
@@ -348,7 +344,7 @@
         <artifactId>jacoco-maven-plugin</artifactId>
         <configuration>
           <excludes>
-            <exclude>it.osys.jaxrsodata.antlr4.*</exclude>
+            <exclude>it/osys/jaxrsodata/antlr4/*</exclude>
           </excludes>
         </configuration>
         <executions>
@@ -378,13 +374,12 @@
       </plugin>
 
       <plugin>
-        <groupId>org.sonatype.plugins</groupId>
-        <artifactId>nexus-staging-maven-plugin</artifactId>
+        <groupId>org.sonatype.central</groupId>
+        <artifactId>central-publishing-maven-plugin</artifactId>
         <extensions>true</extensions>
         <configuration>
-          <serverId>ossrh</serverId>
-          <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-          <autoReleaseAfterClose>true</autoReleaseAfterClose>
+          <publishingServerId>central</publishingServerId>
+          <autoPublish>true</autoPublish>
         </configuration>
       </plugin>
 
@@ -453,7 +448,7 @@
 
   <profiles>
     <profile>
-      <id>sing</id>
+      <id>sign</id>
       <activation>
         <activeByDefault>false</activeByDefault>
       </activation>

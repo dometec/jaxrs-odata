@@ -3,6 +3,11 @@ package it.osys.jaxrsodata;
 /**
  * OData parameters and default values.
  *
+ * <p>All fields are public for ease of use. Callers are responsible for
+ * providing valid values: {@code top} must be &gt; 0, {@code skip} must be
+ * &ge; 0. Setting {@code top} to 0 or a negative value may result in no
+ * results being returned, depending on the JPA provider.</p>
+ *
  * @author Domenico Briganti
  */
 public class QueryOptions {

@@ -35,8 +35,14 @@ import it.osys.jaxrsodata.orderby.JPAOrderVisitor;
  * Base Class. 1- Set entity manager 2- Call getAll (and countAll) passing
  * QueryOption
  *
+ * <p><strong>Thread Safety:</strong> This class is <em>not thread-safe</em>.
+ * Each thread must use its own {@code OData} instance. Sharing a single
+ * instance across threads will cause race conditions because the internal
+ * visitor state ({@code visitorFilter}, {@code visitorOrder}) is mutated
+ * on every invocation of {@link #get} and {@link #count}.</p>
+ *
  * @param <T> Entity class
- * 
+ *
  * @author Domenico Briganti
  */
 public class OData<T> {
@@ -56,9 +62,12 @@ public class OData<T> {
 	/**
 	 *  I need the class since I can't rely on to Reflection to get the Generic Type.
 	 *
-	 * @param clazz The Entity class
+	 * @param clazz The Entity class, must not be {@code null}
+	 * @throws IllegalArgumentException if {@code clazz} is {@code null}
 	 */
 	public OData(Class<T> clazz) {
+		if (clazz == null)
+			throw new IllegalArgumentException("Entity class must not be null");
 		entityClass = clazz;
 	}
 
@@ -137,6 +146,7 @@ public class OData<T> {
 		query.select(cb.count(root));
 
 		visitorFilter.setCb(cb);
+		visitorFilter.setEntityManager(em);
 		visitorFilter.setRoot(root);
 
 		if (queryOptions.filter != null)
@@ -223,9 +233,7 @@ public class OData<T> {
 					Join<T, ?> join = opJoin.orElseGet(() -> root.join(attributeName));
 					path = join.get(fieldname[++idx]);
 
-				}
-
-				if (path.getJavaType().isAssignableFrom(Map.class)) {
+				} else if (path.getJavaType().isAssignableFrom(Map.class)) {
 
 					Optional<Join<T, ?>> opJoin = root.getJoins().stream().filter(p -> p.getAttribute().getName().equals(attributeName))
 							.findFirst();
