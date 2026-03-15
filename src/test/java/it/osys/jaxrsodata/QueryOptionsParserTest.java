@@ -6,12 +6,9 @@ import jakarta.ws.rs.core.MultivaluedHashMap;
 import jakarta.ws.rs.core.MultivaluedMap;
 import jakarta.ws.rs.core.UriInfo;
 
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
 
-@RunWith(JUnitPlatform.class)
 class QueryOptionsParserTest {
 
 	@Test
@@ -28,13 +25,13 @@ class QueryOptionsParserTest {
 		UriInfo mock = new UriInfoMock(map);
 
 		QueryOptions queryOptions = QueryOptionsParser.from(mock);
-		Assert.assertEquals(queryOptions.top, 1);
-		Assert.assertEquals(queryOptions.skip, 10);
-		Assert.assertTrue(queryOptions.count);
-		Assert.assertEquals(queryOptions.expand, "e1");
-		Assert.assertEquals(queryOptions.orderby, "o1");
-		Assert.assertEquals(queryOptions.search, "s1");
-		Assert.assertNotNull(queryOptions.toString());
+		Assertions.assertEquals(queryOptions.top, 1);
+		Assertions.assertEquals(queryOptions.skip, 10);
+		Assertions.assertTrue(queryOptions.count);
+		Assertions.assertEquals(queryOptions.expand, "e1");
+		Assertions.assertEquals(queryOptions.orderby, "o1");
+		Assertions.assertEquals(queryOptions.search, "s1");
+		Assertions.assertNotNull(queryOptions.toString());
 
 	}
 

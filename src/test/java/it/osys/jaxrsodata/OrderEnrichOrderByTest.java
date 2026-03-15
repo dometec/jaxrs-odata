@@ -7,10 +7,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
 
-@RunWith(JUnitPlatform.class)
 @TestMethodOrder(MethodOrderer.Random.class)
 public class OrderEnrichOrderByTest {
 
