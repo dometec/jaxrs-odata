@@ -17,4 +17,14 @@ public class FormatExceptionException extends RuntimeException {
 		super(message);
 	}
 
+	/**
+	 * Instantiates a new format exception exception.
+	 *
+	 * @param message the message
+	 * @param cause the cause
+	 */
+	public FormatExceptionException(String message, Throwable cause) {
+		super(message, cause);
+	}
+
 }

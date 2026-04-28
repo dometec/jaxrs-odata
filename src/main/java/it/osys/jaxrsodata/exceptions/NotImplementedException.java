@@ -17,4 +17,14 @@ public class NotImplementedException extends RuntimeException {
 		super(message);
 	}
 
+	/**
+	 * Instantiates a new not implemented exception.
+	 *
+	 * @param message the message
+	 * @param cause the cause
+	 */
+	public NotImplementedException(String message, Throwable cause) {
+		super(message, cause);
+	}
+
 }
