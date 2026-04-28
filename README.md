@@ -1,11 +1,9 @@
 
-[![Build Status](https://travis-ci.org/dometec/jaxrs-odata.svg?branch=master)](https://travis-ci.org/dometec/jaxrs-odata)
+[![CI](https://github.com/dometec/jaxrs-odata/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/dometec/jaxrs-odata/actions?query=branch%3Amaster)
 
-[![codecov](https://codecov.io/gh/dometec/jaxrs-odata/branch/master/graph/badge.svg)](https://codecov.io/gh/dometec/jaxrs-odata)
+[![codecov](https://codecov.io/github/dometec/jaxrs-odata/graph/badge.svg?token=5qIyhmDDXj)](https://codecov.io/github/dometec/jaxrs-odata)
 
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/it.osys/jaxrs-odata/badge.svg)](https://maven-badges.herokuapp.com/maven-central/it.osys/jaxrs-odata/)
-
-[Maven generated site](https://docs.osys.it/it.osys.jaxrsodata/)
+[![Maven Central](https://img.shields.io/maven-central/v/it.osys/jaxrs-odata.svg?label=Maven%20Central)](https://central.sonatype.com/artifact/it.osys/jaxrs-odata/jaxrs-odata)
 
 # Introduction
 
