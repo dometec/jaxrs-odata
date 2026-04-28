@@ -7,6 +7,7 @@ import jakarta.persistence.criteria.Root;
 
 import it.osys.jaxrsodata.antlr4.ODataFilterParser;
 import it.osys.jaxrsodata.antlr4.ODataFilterParser.ExprContext;
+import it.osys.jaxrsodata.exceptions.FormatExceptionException;
 
 /**
  * The Class DefaultJPAFilterVisitor.
@@ -65,6 +66,15 @@ public class DefaultJPAFilterVisitor<T> implements JPAFilterVisitor<T> {
 	@Override
 	public Object visit(ExprContext context) {
 
+		if (context == null)
+			throw new IllegalArgumentException("Filter expression context must not be null");
+		if (cb == null)
+			throw new IllegalStateException("CriteriaBuilder must be set before visiting filter");
+		if (root == null)
+			throw new IllegalStateException("Root must be set before visiting filter");
+		if (em == null)
+			throw new IllegalStateException("EntityManager must be set before visiting filter");
+
 		if (context.AND() != null)
 			return cb.and((Predicate) visit(context.expr(0)), (Predicate) visit(context.expr(1)));
 
@@ -87,7 +97,7 @@ public class DefaultJPAFilterVisitor<T> implements JPAFilterVisitor<T> {
 		if (predicate != null)
 			return predicate;
 
-		throw new IllegalStateException();
+		throw new FormatExceptionException("Unsupported or invalid filter expression: " + context.getText());
 	}
 
 }

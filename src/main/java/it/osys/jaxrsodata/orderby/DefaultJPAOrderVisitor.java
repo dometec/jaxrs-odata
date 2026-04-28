@@ -54,6 +54,15 @@ public class DefaultJPAOrderVisitor<T> implements JPAOrderVisitor<T> {
 	@Override
 	public void visit(ExprContext context, List<Order> orders) {
 
+		if (context == null)
+			throw new IllegalArgumentException("OrderBy expression context must not be null");
+		if (orders == null)
+			throw new IllegalArgumentException("orders must not be null");
+		if (root == null)
+			throw new IllegalStateException("Root must be set before visiting orderby");
+		if (cb == null)
+			throw new IllegalStateException("CriteriaBuilder must be set before visiting orderby");
+
 		if (context.getChild(0) == null)
 			return;
 

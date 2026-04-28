@@ -4,7 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Collection;
-import java.util.Objects;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -17,6 +17,7 @@ import jakarta.persistence.criteria.Root;
 
 import it.osys.jaxrsodata.OData;
 import it.osys.jaxrsodata.antlr4.ODataFilterParser.ExprContext;
+import it.osys.jaxrsodata.exceptions.FormatExceptionException;
 
 /**
  * The Class DefaultJPAFilterDao.
@@ -79,53 +80,98 @@ public class DefaultJPAFilterDao<T> {
 	 */
 	public void setup(ExprContext context) {
 
-		if (context.children != null) {
+		if (context == null)
+			throw new IllegalArgumentException("Filter expression context must not be null");
+		if (root == null)
+			throw new IllegalStateException("Root must be set before setup()");
+		if (cb == null)
+			throw new IllegalStateException("CriteriaBuilder must be set before setup()");
+		if (em == null)
+			throw new IllegalStateException("EntityManager must be set before setup()");
 
-			this.context = context;
+		this.context = context;
 
-			Integer indexField = 0;
-			Integer indexValue = 2;
-
-			// If the first element of the filter is a function (ex.
-			// "tolower(value)") we need to shift the index of value and field
-			// accordingly.
-
-			if (this.context.TOLOWER() != null || this.context.TOUPPER() != null) {
-
-				this.field = this.context.getChild(indexField + 2).getText();
-				this.value = this.context.getChild(indexValue + 3).getText().replace("'", "");
-
-			} else if (this.context.CONTAINS() != null) {
-
-				this.field = this.context.getChild(indexField + 2).getText();
-				this.value = this.context.getChild(indexValue + 2).getText().replace("'", "");
-
-			} else if (this.context.LENGTH() != null && this.context.children.size() == 6) {
-
-				this.field = this.context.getChild(indexField + 2).getText();
-				this.value = Integer.parseInt(this.context.NUMBER().get(0).getText());
-
-			} else if (this.context.IN() != null) {
-
-				this.field = this.context.FIELD().getText();
-
-				if (this.context.STRINGLITERAL().size() > 0)
-					this.value = this.context.STRINGLITERAL().stream().map(e -> e.getText().replace("'", "")).collect(Collectors.toSet());
-
-				if (this.context.NUMBER().size() > 0)
-					this.value = this.context.NUMBER().stream().map(e -> Long.parseLong(e.getText())).collect(Collectors.toSet());
-
-			} else {
-
-				this.field = this.context.getChild(indexField).getText();
-				this.value = this.context.getChild(indexValue).getText().replace("'", "");
-
-				Path<Object> path = OData.getPathFromField(this.root, this.field.toString());
-				this.value = convValueToFieldType(path, this.value.toString().replace("'", ""));
-
-			}
-
+		if (this.context.CONTAINS() != null && this.context.BR_OPEN() != null) {
+			this.field = this.context.FIELD().getText();
+			this.value = unquote(this.context.STRINGLITERAL(0).getText());
+			return;
 		}
+
+		if ((this.context.TOLOWER() != null || this.context.TOUPPER() != null) && this.context.BR_OPEN() != null) {
+			this.field = this.context.FIELD().getText();
+			this.value = unquote(this.context.STRINGLITERAL(0).getText());
+			return;
+		}
+
+		if (this.context.LENGTH() != null && this.context.BR_OPEN() != null) {
+			this.field = this.context.FIELD().getText();
+			this.value = Integer.parseInt(this.context.NUMBER(0).getText());
+			return;
+		}
+
+		if (this.context.IN() != null) {
+			this.field = this.context.getChild(0).getText();
+
+			Set<String> rawValues = new HashSet<>();
+			if (this.context.STRINGLITERAL() != null && !this.context.STRINGLITERAL().isEmpty()) {
+				rawValues.addAll(this.context.STRINGLITERAL().stream().map(t -> unquote(t.getText())).collect(Collectors.toSet()));
+			}
+			if (this.context.NUMBER() != null && !this.context.NUMBER().isEmpty()) {
+				rawValues.addAll(this.context.NUMBER().stream().map(t -> t.getText()).collect(Collectors.toSet()));
+			}
+			if (rawValues.isEmpty())
+				throw new FormatExceptionException("IN operator requires at least one value: " + context.getText());
+
+			Path<Object> path = OData.getPathFromField(this.root, this.field.toString());
+			this.value = rawValues.stream().map(v -> convValueToFieldType(path, v)).collect(Collectors.toSet());
+			return;
+		}
+
+		if (this.context.getChild(0) == null)
+			throw new FormatExceptionException("Unsupported filter expression: " + context.getText());
+		this.field = this.context.getChild(0).getText();
+
+		Path<Object> path = OData.getPathFromField(this.root, this.field.toString());
+
+		if (this.context.NULL() != null) {
+			this.value = null;
+			return;
+		}
+
+		if (this.context.STRINGLITERAL() != null && !this.context.STRINGLITERAL().isEmpty()) {
+			this.value = convValueToFieldType(path, unquote(this.context.STRINGLITERAL(0).getText()));
+			return;
+		}
+
+		if (this.context.NUMBER() != null && !this.context.NUMBER().isEmpty()) {
+			this.value = convValueToFieldType(path, this.context.NUMBER(0).getText());
+			return;
+		}
+
+		if (this.context.TIME() != null) {
+			this.value = convValueToFieldType(path, unquote(this.context.TIME().getText()));
+			return;
+		}
+
+		if (this.context.DATETIME() != null) {
+			this.value = convValueToFieldType(path, unquote(this.context.DATETIME().getText()));
+			return;
+		}
+
+		if (this.context.BOOLEAN() != null) {
+			this.value = convValueToFieldType(path, this.context.BOOLEAN().getText());
+			return;
+		}
+
+		throw new FormatExceptionException("Unsupported filter expression: " + context.getText());
+	}
+
+	private static String unquote(String s) {
+		if (s == null)
+			return null;
+		if (s.length() >= 2 && s.startsWith("'") && s.endsWith("'"))
+			return s.substring(1, s.length() - 1);
+		return s;
 	}
 
 	/**
@@ -234,14 +280,12 @@ public class DefaultJPAFilterDao<T> {
 					for (Object v : values) {
 						if (v == null)
 							continue;
-						Object typed = (v instanceof String s) ? convValueToFieldType(path, s) : convValueToFieldType(path, v.toString());
-						in.value(typed);
+						in.value(v);
 					}
 					return in;
 				}
 
-				Object typed = (this.value instanceof String s) ? convValueToFieldType(path, s) : convValueToFieldType(path, this.value.toString());
-				in.value(typed);
+				in.value(this.value);
 				return in;
 			}
 
