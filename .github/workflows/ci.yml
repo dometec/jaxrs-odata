@@ -34,4 +34,10 @@ jobs:
         uses: codecov/codecov-action@v4
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          files: target/site/jacoco/jacoco.xml
+          # Pin the CLI to avoid the noisy "latest version" metadata fetch (can return HTML and log a JSON parse error).
+          version: v11.2.8
+          # We already generate JaCoCo XML; disable optional autodetect plugins (xcode/gcov/pycoverage) to reduce warnings on Linux runners.
+          plugins: noop
+          fail_ci_if_error: false
+          file: target/site/jacoco/jacoco.xml
+          disable_search: true
