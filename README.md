@@ -45,6 +45,15 @@ For Java 11 and Jakarta EE 9/10 use a 2.x.x version:
 </dependency>
 ```
 
+For Java 11+ and Jakarta EE 11 use a 3.x.x version:
+```
+<dependency>
+  <groupId>it.osys</groupId>
+  <artifactId>jaxrs-odata</artifactId>
+  <version>3.2.11</version>
+</dependency>
+```
+
 # Usage
 
 In the code, create an instance of OData class passing the Entity Bean Class. Set the Entity Manager and call <getAll> method or the <count> method passing the QueryOptions.

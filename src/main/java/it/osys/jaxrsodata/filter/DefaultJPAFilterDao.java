@@ -276,8 +276,8 @@ public class DefaultJPAFilterDao<T> {
 
 				In in = cb.in(path);
 
-				if (this.value instanceof Collection<?> values) {
-					for (Object v : values) {
+				if (this.value instanceof Collection) {
+					for (Object v : (Collection<?>) this.value) {
 						if (v == null)
 							continue;
 						in.value(v);
