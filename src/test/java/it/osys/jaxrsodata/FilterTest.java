@@ -631,4 +631,33 @@ public class FilterTest extends HSQLDBInitialize {
 		Assertions.assertEquals(4, result.size());
 	}
 
+	@Test
+	public void nonRegression_lengthFieldVsLengthFunction() {
+		// "length" is both a field name and a function name in the grammar.
+		// This asserts that "length ge 10" (field) and "length(ownerids) eq 0" (function) can coexist.
+		String filter = "(length ge 10) and (length(ownerids) eq 0)";
+		List<TestEntity> result = getFilteredResults(filter);
+		Assertions.assertEquals(1, result.size());
+		Assertions.assertEquals(Long.valueOf(2), result.get(0).getId());
+	}
+
+	@Test
+	public void nonRegression_inOnIntField() {
+		String filter = "version in (1, 2)";
+		List<TestEntity> result = getFilteredResults(filter);
+		Assertions.assertEquals(2, result.size());
+		Assertions.assertEquals(Long.valueOf(1), result.get(0).getId());
+		Assertions.assertEquals(Long.valueOf(2), result.get(1).getId());
+	}
+
+	@Test
+	public void nonRegression_inOnEnumField() {
+		String filter = "enumType in ('Enum1', 'Enum3')";
+		List<TestEntity> result = getFilteredResults(filter);
+		Assertions.assertEquals(3, result.size());
+		Assertions.assertEquals(Long.valueOf(1), result.get(0).getId());
+		Assertions.assertEquals(Long.valueOf(3), result.get(1).getId());
+		Assertions.assertEquals(Long.valueOf(4), result.get(2).getId());
+	}
+
 }
