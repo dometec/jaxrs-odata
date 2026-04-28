@@ -3,7 +3,7 @@
 
 [![codecov](https://codecov.io/github/dometec/jaxrs-odata/graph/badge.svg?token=5qIyhmDDXj)](https://codecov.io/github/dometec/jaxrs-odata)
 
-[![Maven Central](https://img.shields.io/maven-central/v/it.osys/jaxrs-odata.svg?label=Maven%20Central)](https://central.sonatype.com/artifact/it.osys/jaxrs-odata/jaxrs-odata)
+[![Maven Central](https://img.shields.io/maven-central/v/it.osys/jaxrs-odata.svg?label=Maven%20Central)](https://central.sonatype.com/artifact/it.osys/jaxrs-odata)
 
 # Introduction
 
