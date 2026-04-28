@@ -2,7 +2,7 @@
 Per fare una nuova release e pubblicare su maven central
 
 # mvn release:prepare
-# mvn release:perform -P sing
+# mvn release:perform -P sign
 
 Attenzione ad avere le chiave nella HOME/.gnugpg che hai distribuito in precedenza ai key server.
 
