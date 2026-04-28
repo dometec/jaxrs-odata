@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>it.osys</groupId>
   <artifactId>jaxrs-odata</artifactId>
-  <version>2.2.12-SNAPSHOT</version>
+  <version>2.3.0-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>Simple OData implementation for JAX-RS and JPA</name>
@@ -307,14 +307,10 @@
 
       <plugin>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>attach-javadocs</id>
-            <goals>
-              <goal>jar</goal>
-            </goals>
-          </execution>
-        </executions>
+        <configuration>
+          <excludePackageNames>it.osys.jaxrsodata.antlr4</excludePackageNames>
+          <doclint>all,-missing</doclint>
+        </configuration>
       </plugin>
 
       <plugin>

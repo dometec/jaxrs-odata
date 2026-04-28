@@ -3,6 +3,8 @@ package it.osys.jaxrsodata.filter;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Collection;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -223,8 +225,23 @@ public class DefaultJPAFilterDao<T> {
 				return cb.notEqual(path, this.value);
 
 			if (this.context.IN() != null) {
+				if (this.value == null)
+					throw new IllegalArgumentException("IN operator requires at least one value");
+
 				In in = cb.in(path);
-				in.value(this.value);
+
+				if (this.value instanceof Collection<?> values) {
+					for (Object v : values) {
+						if (v == null)
+							continue;
+						Object typed = (v instanceof String s) ? convValueToFieldType(path, s) : convValueToFieldType(path, v.toString());
+						in.value(typed);
+					}
+					return in;
+				}
+
+				Object typed = (this.value instanceof String s) ? convValueToFieldType(path, s) : convValueToFieldType(path, this.value.toString());
+				in.value(typed);
 				return in;
 			}
 

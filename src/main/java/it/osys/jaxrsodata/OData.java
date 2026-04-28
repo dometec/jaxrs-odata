@@ -47,6 +47,8 @@ import it.osys.jaxrsodata.orderby.JPAOrderVisitor;
  */
 public class OData<T> {
 
+	private static final int DEFAULT_TOP = 500;
+
 	/** The em. */
 	private EntityManager em;
 	
@@ -108,6 +110,11 @@ public class OData<T> {
 	 * @return the recordset
 	 */
 	public List<T> get(QueryOptions queryOptions) {
+		if (em == null)
+			throw new IllegalStateException("EntityManager must be set before calling get()");
+		if (queryOptions == null)
+			throw new IllegalArgumentException("queryOptions must not be null");
+
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<T> query = cb.createQuery(entityClass);
 		Root<T> root = query.from(entityClass);
@@ -125,8 +132,10 @@ public class OData<T> {
 			query.orderBy(createOrderPredicate(visitorOrder, queryOptions.orderby));
 
 		TypedQuery<T> namedQuery = em.createQuery(query);
-		namedQuery.setFirstResult(queryOptions.skip);
-		namedQuery.setMaxResults(queryOptions.top);
+		int skip = Math.max(0, queryOptions.skip);
+		int top = queryOptions.top > 0 ? queryOptions.top : DEFAULT_TOP;
+		namedQuery.setFirstResult(skip);
+		namedQuery.setMaxResults(top);
 
 		return namedQuery.getResultList();
 	}
@@ -139,6 +148,11 @@ public class OData<T> {
 	 * @return the number of record impacted by the filter 
 	 */
 	public long count(QueryOptions queryOptions) {
+		if (em == null)
+			throw new IllegalStateException("EntityManager must be set before calling count()");
+		if (queryOptions == null)
+			throw new IllegalArgumentException("queryOptions must not be null");
+
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<Long> query = cb.createQuery(Long.class);
 		Root<T> root = query.from(entityClass);
@@ -149,7 +163,7 @@ public class OData<T> {
 		visitorFilter.setEntityManager(em);
 		visitorFilter.setRoot(root);
 
-		if (queryOptions.filter != null)
+		if (queryOptions.filter != null && !queryOptions.filter.isEmpty())
 			query.where(createWherePredicate(visitorFilter, queryOptions.filter));
 
 		TypedQuery<Long> namedQuery = em.createQuery(query);

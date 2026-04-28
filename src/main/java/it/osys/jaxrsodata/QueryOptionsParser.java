@@ -13,6 +13,37 @@ import jakarta.ws.rs.core.UriInfo;
  */
 public class QueryOptionsParser {
 
+	private static final int DEFAULT_TOP = 500;
+	private static final int DEFAULT_SKIP = 0;
+
+	private static int parsePositiveInt(String raw, String paramName, int defaultValue) {
+		if (raw == null)
+			return defaultValue;
+		String v = raw.trim();
+		if (v.isEmpty())
+			return defaultValue;
+		try {
+			int parsed = Integer.parseInt(v);
+			return parsed > 0 ? parsed : defaultValue;
+		} catch (NumberFormatException e) {
+			throw new IllegalArgumentException("Invalid integer value for query param " + paramName + ": " + raw, e);
+		}
+	}
+
+	private static int parseNonNegativeInt(String raw, String paramName, int defaultValue) {
+		if (raw == null)
+			return defaultValue;
+		String v = raw.trim();
+		if (v.isEmpty())
+			return defaultValue;
+		try {
+			int parsed = Integer.parseInt(v);
+			return parsed >= 0 ? parsed : defaultValue;
+		} catch (NumberFormatException e) {
+			throw new IllegalArgumentException("Invalid integer value for query param " + paramName + ": " + raw, e);
+		}
+	}
+
 	/**
 	 * From.
 	 *
@@ -20,6 +51,8 @@ public class QueryOptionsParser {
 	 * @return the query options
 	 */
 	public static QueryOptions from(UriInfo info) {
+		if (info == null)
+			throw new IllegalArgumentException("UriInfo must not be null");
 		return from(info.getQueryParameters());
 	}
 
@@ -31,12 +64,15 @@ public class QueryOptionsParser {
 	 */
 	public static QueryOptions from(MultivaluedMap<String, String> queryParameters) {
 
-		QueryOptions queryOptions = new QueryOptions();
-		if (queryParameters.containsKey("$top") && !queryParameters.getFirst("$top").isEmpty())
-			queryOptions.top = Integer.parseInt(queryParameters.getFirst("$top"));
+		if (queryParameters == null)
+			throw new IllegalArgumentException("queryParameters must not be null");
 
-		if (queryParameters.containsKey("$skip") && !queryParameters.getFirst("$skip").isEmpty())
-			queryOptions.skip = Integer.parseInt(queryParameters.getFirst("$skip"));
+		QueryOptions queryOptions = new QueryOptions();
+		if (queryParameters.containsKey("$top"))
+			queryOptions.top = parsePositiveInt(queryParameters.getFirst("$top"), "$top", DEFAULT_TOP);
+
+		if (queryParameters.containsKey("$skip"))
+			queryOptions.skip = parseNonNegativeInt(queryParameters.getFirst("$skip"), "$skip", DEFAULT_SKIP);
 
 		if (queryParameters.containsKey("$count") && !queryParameters.getFirst("$count").isEmpty())
 			queryOptions.count = Boolean.parseBoolean(queryParameters.getFirst("$count"));
@@ -64,6 +100,8 @@ public class QueryOptionsParser {
 	 * @return the query options
 	 */
 	public static QueryOptions from(UriInfo info, String fieldId) {
+		if (info == null)
+			throw new IllegalArgumentException("UriInfo must not be null");
 		return from(info.getQueryParameters(), fieldId);
 	}
 
@@ -79,8 +117,9 @@ public class QueryOptionsParser {
 
 		QueryOptions queryOptions = from(queryParameters);
 
-		if (queryOptions.orderby != null && !queryOptions.orderby.trim().equals("")) {
-			Pattern pattern = Pattern.compile("(?<= |\\b)" + fieldId + "(?= |\\b)");
+		if (fieldId != null && !fieldId.trim().isEmpty() && queryOptions.orderby != null && !queryOptions.orderby.trim().equals("")) {
+			String quotedFieldId = Pattern.quote(fieldId.trim());
+			Pattern pattern = Pattern.compile("(?<= |\\b)" + quotedFieldId + "(?= |\\b)");
 			Matcher match = pattern.matcher(queryOptions.orderby);
 
 			if (!match.find()) {

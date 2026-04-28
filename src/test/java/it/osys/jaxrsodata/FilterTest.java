@@ -627,12 +627,8 @@ public class FilterTest extends HSQLDBInitialize {
 	@Test
 	public void throwExceptionWhenFilterEmpty() {
 		String filter = "";
-
-		try {
-			getFilteredResults(filter);
-		} catch (Exception e) {
-			Assertions.assertEquals(IllegalStateException.class, e.getClass());
-		}
+		List<TestEntity> result = Assertions.assertDoesNotThrow(() -> getFilteredResults(filter));
+		Assertions.assertEquals(4, result.size());
 	}
 
 }
