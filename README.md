@@ -211,15 +211,16 @@ public class ODataParamsFilter implements OASFilter {
       search.setSchema(sString);
       search.setDescription("Specify a custom search string");
 
-      if (operation.getParameters() == null)
-        operation.setParameters(new ArrayList<>());
-
-      operation.getParameters().add(top);
-      operation.getParameters().add(skip);
-      operation.getParameters().add(count);
-      operation.getParameters().add(orderby);
-      operation.getParameters().add(filter);
-      operation.getParameters().add(search);
+      List<Parameter> p = new ArrayList<>();
+      List<Parameter> esistPrameters = operation.getParameters();
+      if (esistPrameters != null) p.addAll(esistPrameters);
+      p.add(top);
+      p.add(skip);
+      p.add(count);
+      p.add(orderby);
+      p.add(filter);
+      p.add(search);
+      operation.setParameters(p);
 
     }
 
