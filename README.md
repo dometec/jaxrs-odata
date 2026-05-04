@@ -212,8 +212,8 @@ public class ODataParamsFilter implements OASFilter {
       search.setDescription("Specify a custom search string");
 
       List<Parameter> p = new ArrayList<>();
-      List<Parameter> esistPrameters = operation.getParameters();
-      if (esistPrameters != null) p.addAll(esistPrameters);
+      List<Parameter> existingParameters = operation.getParameters();
+      if (existingParameters != null) p.addAll(existingParameters);
       p.add(top);
       p.add(skip);
       p.add(count);
