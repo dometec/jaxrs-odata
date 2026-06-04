@@ -3,11 +3,17 @@ package it.osys.jaxrsodata;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import it.osys.jaxrsodata.entity.TestEntity;
 import it.osys.jaxrsodata.entity.enums.TestEnumEntity;
+import it.osys.jaxrsodata.exceptions.FormatExceptionException;
+import it.osys.jaxrsodata.filter.DefaultJPAFilterVisitor;
 
 public class FilterTest extends HSQLDBInitialize {
 
@@ -658,6 +664,79 @@ public class FilterTest extends HSQLDBInitialize {
 		Assertions.assertEquals(Long.valueOf(1), result.get(0).getId());
 		Assertions.assertEquals(Long.valueOf(3), result.get(1).getId());
 		Assertions.assertEquals(Long.valueOf(4), result.get(2).getId());
+	}
+
+	@Test
+	public void subqueryInWithWhere() {
+		// Equivalent to the collection-nav filter "subentities/stringType1 eq 'app1'".
+		String filter = "id in (select parent/id from TestEntitySub where stringType1 eq 'app1')";
+		List<TestEntity> result = getFilteredResults(filter);
+		long count = getFilteredCount(filter);
+		Assertions.assertEquals(2, result.size());
+		Assertions.assertEquals(2, count);
+	}
+
+	@Test
+	public void subqueryInWithoutWhere() {
+		// All sub rows point to parents 1 and 2, so two TestEntity rows match.
+		String filter = "id in (select parent/id from TestEntitySub)";
+		List<TestEntity> result = getFilteredResults(filter);
+		long count = getFilteredCount(filter);
+		Assertions.assertEquals(2, result.size());
+		Assertions.assertEquals(2, count);
+	}
+
+	@Test
+	public void subqueryInComposedWithAnd() {
+		// Mirrors the server-scope AND client-filter composition pattern.
+		// Subquery yields parents {1, 2}; both have version ge 1.
+		String filter = "(id in (select parent/id from TestEntitySub where stringType1 eq 'app1')) and version ge 1";
+		List<TestEntity> result = getFilteredResults(filter);
+		long count = getFilteredCount(filter);
+		Assertions.assertEquals(2, result.size());
+		Assertions.assertEquals(2, count);
+	}
+
+	@Test
+	public void subqueryInNested() {
+		// A subquery whose where clause contains another in (select ...) subquery,
+		// also exercising a single-segment select field ("select id from TestEntity").
+		// Inner: TestEntity with stringType1 'app1' -> {1}.
+		// Middle: sub rows whose parent is in {1} -> parent ids {1}.
+		// Outer: TestEntity id in {1} -> only entity 1.
+		String filter = "id in (select parent/id from TestEntitySub where parent/id in (select id from TestEntity where stringType1 eq 'app1'))";
+		List<TestEntity> result = getFilteredResults(filter);
+		long count = getFilteredCount(filter);
+		Assertions.assertEquals(1, result.size());
+		Assertions.assertEquals(1, count);
+		Assertions.assertEquals(Long.valueOf(1), result.get(0).getId());
+	}
+
+	@Test
+	public void subqueryInUnknownEntity() {
+		// An unknown entity name in the subquery must be rejected.
+		String filter = "id in (select parent/id from NonExistentEntity)";
+		Assertions.assertThrows(FormatExceptionException.class, () -> getFilteredResults(filter));
+		Assertions.assertThrows(FormatExceptionException.class, () -> getFilteredCount(filter));
+	}
+
+	@Test
+	public void subqueryInWithoutQueryThrows() {
+		// Visiting an in (select ...) expression without an enclosing query set
+		// must fail fast rather than produce a broken subquery.
+		super.setEntityManager(em);
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<TestEntity> query = cb.createQuery(TestEntity.class);
+		Root<TestEntity> root = query.from(TestEntity.class);
+
+		DefaultJPAFilterVisitor<TestEntity> visitor = new DefaultJPAFilterVisitor<>();
+		visitor.setCb(cb);
+		visitor.setEntityManager(em);
+		visitor.setRoot(root);
+		// intentionally no setQuery(...)
+
+		String filter = "id in (select parent/id from TestEntitySub)";
+		Assertions.assertThrows(IllegalStateException.class, () -> createWherePredicate(visitor, filter));
 	}
 
 }

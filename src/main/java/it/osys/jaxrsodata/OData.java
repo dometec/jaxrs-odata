@@ -122,6 +122,7 @@ public class OData<T> {
 		visitorFilter.setCb(cb);
 		visitorFilter.setEntityManager(em);
 		visitorFilter.setRoot(root);
+		visitorFilter.setQuery(query);
 		if (queryOptions.filter != null && !queryOptions.filter.isEmpty())
 			query.where(createWherePredicate(visitorFilter, queryOptions.filter));
 
@@ -162,6 +163,7 @@ public class OData<T> {
 		visitorFilter.setCb(cb);
 		visitorFilter.setEntityManager(em);
 		visitorFilter.setRoot(root);
+		visitorFilter.setQuery(query);
 
 		if (queryOptions.filter != null && !queryOptions.filter.isEmpty())
 			query.where(createWherePredicate(visitorFilter, queryOptions.filter));

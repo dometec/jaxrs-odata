@@ -92,19 +92,19 @@ public class DefaultJPAFilterDao<T> {
 		this.context = context;
 
 		if (this.context.CONTAINS() != null && this.context.BR_OPEN() != null) {
-			this.field = this.context.FIELD().getText();
+			this.field = this.context.FIELD(0).getText();
 			this.value = unquote(this.context.STRINGLITERAL(0).getText());
 			return;
 		}
 
 		if ((this.context.TOLOWER() != null || this.context.TOUPPER() != null) && this.context.BR_OPEN() != null) {
-			this.field = this.context.FIELD().getText();
+			this.field = this.context.FIELD(0).getText();
 			this.value = unquote(this.context.STRINGLITERAL(0).getText());
 			return;
 		}
 
 		if (this.context.LENGTH() != null && this.context.BR_OPEN() != null) {
-			this.field = this.context.FIELD().getText();
+			this.field = this.context.FIELD(0).getText();
 			this.value = Integer.parseInt(this.context.NUMBER(0).getText());
 			return;
 		}

@@ -1,6 +1,7 @@
 package it.osys.jaxrsodata.filter;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.criteria.AbstractQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.Root;
 
@@ -43,5 +44,13 @@ public interface JPAFilterVisitor<T> {
 	 * @param em the new entity manager
 	 */
 	void setEntityManager(EntityManager em);
+
+	/**
+	 * Sets the enclosing query. Required so that {@code field in (select ...)}
+	 * subqueries can be created via {@link AbstractQuery#subquery}.
+	 *
+	 * @param query the enclosing criteria query (or parent subquery)
+	 */
+	void setQuery(AbstractQuery<?> query);
 
 }
