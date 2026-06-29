@@ -61,6 +61,9 @@ public class OData<T> {
 	/** The visitor order. */
 	private JPAOrderVisitor<T> visitorOrder = new DefaultJPAOrderVisitor<T>();
 
+	/** The fields on which {@code $search} performs a substring match. */
+	private List<String> searchFields = new ArrayList<>();
+
 	/**
 	 *  I need the class since I can't rely on to Reflection to get the Generic Type.
 	 *
@@ -89,6 +92,22 @@ public class OData<T> {
 	 */
 	public void setVisitorOrderBy(JPAOrderVisitor<T> visitorOrderBy) {
 		this.visitorOrder = visitorOrderBy;
+	}
+
+	/**
+	 * Sets the fields used by the {@code $search} query option.
+	 *
+	 * <p>When {@link QueryOptions#search} is set, a case-insensitive substring
+	 * match ({@code LIKE '%term%'}) is performed against each of these fields and
+	 * the results are combined with {@code OR}. Nested paths are supported using
+	 * the same {@code field/subfield} syntax accepted by {@code $filter} (e.g.
+	 * {@code "author/firstname"}). If no fields are configured, {@code $search}
+	 * is ignored.</p>
+	 *
+	 * @param searchFields the searchable field names; {@code null} clears them
+	 */
+	public void setSearchFields(List<String> searchFields) {
+		this.searchFields = searchFields != null ? searchFields : new ArrayList<>();
 	}
 
 	/**
@@ -123,8 +142,14 @@ public class OData<T> {
 		visitorFilter.setEntityManager(em);
 		visitorFilter.setRoot(root);
 		visitorFilter.setQuery(query);
+
+		List<Predicate> predicates = new ArrayList<>();
 		if (queryOptions.filter != null && !queryOptions.filter.isEmpty())
-			query.where(createWherePredicate(visitorFilter, queryOptions.filter));
+			predicates.add(createWherePredicate(visitorFilter, queryOptions.filter));
+		if (queryOptions.search != null && !queryOptions.search.isEmpty() && !searchFields.isEmpty())
+			predicates.add(createSearchPredicate(cb, root, queryOptions.search));
+		if (!predicates.isEmpty())
+			query.where(cb.and(predicates.toArray(new Predicate[0])));
 
 		visitorOrder.setCb(cb);
 		visitorOrder.setRoot(root);
@@ -165,8 +190,13 @@ public class OData<T> {
 		visitorFilter.setRoot(root);
 		visitorFilter.setQuery(query);
 
+		List<Predicate> predicates = new ArrayList<>();
 		if (queryOptions.filter != null && !queryOptions.filter.isEmpty())
-			query.where(createWherePredicate(visitorFilter, queryOptions.filter));
+			predicates.add(createWherePredicate(visitorFilter, queryOptions.filter));
+		if (queryOptions.search != null && !queryOptions.search.isEmpty() && !searchFields.isEmpty())
+			predicates.add(createSearchPredicate(cb, root, queryOptions.search));
+		if (!predicates.isEmpty())
+			query.where(cb.and(predicates.toArray(new Predicate[0])));
 
 		TypedQuery<Long> namedQuery = em.createQuery(query);
 
@@ -216,6 +246,36 @@ public class OData<T> {
 
 		return (Predicate) visitor.visit(context);
 
+	}
+
+	/**
+	 * Creates the {@code $search} predicate: a case-insensitive substring match
+	 * over the configured {@link #setSearchFields(List) search fields}, combined
+	 * with {@code OR}.
+	 *
+	 * <p>LIKE wildcards ({@code %}, {@code _}) and the escape character in the
+	 * search term are escaped, so the term is matched literally.</p>
+	 *
+	 * @param cb     the criteria builder
+	 * @param root   the query root
+	 * @param search the raw search term
+	 * @return the OR predicate across all search fields
+	 */
+	private Predicate createSearchPredicate(CriteriaBuilder cb, Root<T> root, String search) {
+
+		String escaped = search.toLowerCase()
+				.replace("\\", "\\\\")
+				.replace("%", "\\%")
+				.replace("_", "\\_");
+		String pattern = "%" + escaped + "%";
+
+		List<Predicate> ors = new ArrayList<>();
+		for (String field : searchFields) {
+			Path<Object> path = getPathFromField(root, field);
+			ors.add(cb.like(cb.lower(path.as(String.class)), pattern, '\\'));
+		}
+
+		return cb.or(ors.toArray(new Predicate[0]));
 	}
 
 	/**

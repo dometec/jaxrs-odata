@@ -18,6 +18,7 @@ The parameters can be taken directly from an JAX-RS Endpoint using the utility c
 3. $count - Boolean value used to ask to count how many records are impacted by the filter
 4. $orderby - Sort the records
 5. $filter - Filter the records
+6. $search - Free-text substring search over a configured set of fields
 
 
   For more information on OData you can see https://www.odata.org/getting-started/.
@@ -82,6 +83,25 @@ Or
 ```http://<SERVER>/authors?$top=10&$skip=10&$filter=bod ge '1980-01-01' and not (contains(name, 'Valerio'))&$order=address/city asc```
   
 You can see many examples in the [test classes](https://github.com/dometec/jaxrs-odata/blob/master/src/test/java/it/osys/jaxrsodata/FilterTest.java).
+
+## Free-text search ($search)
+
+The `$search` query option performs a case-insensitive substring match (`LIKE '%term%'`) against a set of fields you configure on the `OData` instance with `setSearchFields(...)`. The matches against the configured fields are combined with `OR`, and the result is combined with any `$filter` using `AND`.
+
+Nested paths are supported using the same `field/subfield` syntax accepted by `$filter` (e.g. `author/firstname`). LIKE wildcards (`%`, `_`) and the escape character in the search term are escaped, so the term is matched literally. If no search fields are configured, `$search` is ignored.
+
+```java
+OData<Author> odata = new OData<Author>(Author.class);
+odata.setEntityManager(em);
+odata.setSearchFields(Arrays.asList("name", "address/city"));
+return odata.getAll(queryOptions);
+```
+
+With the configuration above, a request like:
+
+```http://<SERVER>/authors?$search=Adriano```
+
+returns the authors whose `name` or `address/city` contains "Adriano".
 
 # Other suggestions
 
