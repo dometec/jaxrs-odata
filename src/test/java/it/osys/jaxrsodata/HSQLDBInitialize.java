@@ -1,6 +1,7 @@
 package it.osys.jaxrsodata;
 
 import java.io.InputStream;
+import java.sql.Connection;
 import java.sql.SQLException;
 
 import jakarta.persistence.EntityManager;
@@ -16,6 +17,7 @@ import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
 import org.dbunit.ext.hsqldb.HsqldbDataTypeFactory;
 import org.dbunit.operation.DatabaseOperation;
 import org.hibernate.HibernateException;
+import org.hibernate.engine.jdbc.connections.spi.JdbcConnectionAccess;
 import org.hibernate.internal.SessionImpl;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -30,6 +32,9 @@ public class HSQLDBInitialize extends OData<TestEntity> {
 	protected static IDatabaseConnection connection;
 	protected static IDataSet dataset;
 
+	private static JdbcConnectionAccess jdbcConnectionAccess;
+	private static Connection jdbcConnection;
+
 	public HSQLDBInitialize() {
 		super(TestEntity.class);
 	}
@@ -40,7 +45,9 @@ public class HSQLDBInitialize extends OData<TestEntity> {
 		emf = Persistence.createEntityManagerFactory("test_persistence_unit");
 		em = emf.createEntityManager();
 
-		connection = new DatabaseConnection(((SessionImpl) (em.getDelegate())).getJdbcConnectionAccess().obtainConnection());
+		jdbcConnectionAccess = ((SessionImpl) (em.getDelegate())).getJdbcConnectionAccess();
+		jdbcConnection = jdbcConnectionAccess.obtainConnection();
+		connection = new DatabaseConnection(jdbcConnection);
 		connection.getConfig().setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new HsqldbDataTypeFactory());
 
 		FlatXmlDataSetBuilder flatXmlDataSetBuilder = new FlatXmlDataSetBuilder();
@@ -57,7 +64,10 @@ public class HSQLDBInitialize extends OData<TestEntity> {
 	}
 
 	@AfterAll
-	public static void tearDown() {
+	public static void tearDown() throws SQLException {
+		if (jdbcConnection != null)
+			jdbcConnectionAccess.releaseConnection(jdbcConnection);
+
 		if (em != null) {
 			em.clear();
 			em.close();
