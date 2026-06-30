@@ -19,6 +19,8 @@ import jakarta.persistence.criteria.Root;
 
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import it.osys.jaxrsodata.antlr4.ODataFilterLexer;
 import it.osys.jaxrsodata.antlr4.ODataFilterParser;
@@ -48,6 +50,9 @@ import it.osys.jaxrsodata.orderby.JPAOrderVisitor;
 public class OData<T> {
 
 	private static final int DEFAULT_TOP = 500;
+
+	/** The log. */
+	private static final Logger log = LoggerFactory.getLogger(OData.class);
 
 	/** The em. */
 	private EntityManager em;
@@ -146,8 +151,7 @@ public class OData<T> {
 		List<Predicate> predicates = new ArrayList<>();
 		if (queryOptions.filter != null && !queryOptions.filter.isEmpty())
 			predicates.add(createWherePredicate(visitorFilter, queryOptions.filter));
-		if (queryOptions.search != null && !queryOptions.search.isEmpty() && !searchFields.isEmpty())
-			predicates.add(createSearchPredicate(cb, root, queryOptions.search));
+		addSearchPredicate(predicates, cb, root, queryOptions);
 		if (!predicates.isEmpty())
 			query.where(cb.and(predicates.toArray(new Predicate[0])));
 
@@ -193,8 +197,7 @@ public class OData<T> {
 		List<Predicate> predicates = new ArrayList<>();
 		if (queryOptions.filter != null && !queryOptions.filter.isEmpty())
 			predicates.add(createWherePredicate(visitorFilter, queryOptions.filter));
-		if (queryOptions.search != null && !queryOptions.search.isEmpty() && !searchFields.isEmpty())
-			predicates.add(createSearchPredicate(cb, root, queryOptions.search));
+		addSearchPredicate(predicates, cb, root, queryOptions);
 		if (!predicates.isEmpty())
 			query.where(cb.and(predicates.toArray(new Predicate[0])));
 
@@ -246,6 +249,33 @@ public class OData<T> {
 
 		return (Predicate) visitor.visit(context);
 
+	}
+
+	/**
+	 * Adds the {@code $search} predicate to {@code predicates} when a search term
+	 * is present and at least one search field is configured.
+	 *
+	 * <p>If a {@code $search} term is supplied but no search fields were defined
+	 * via {@link #setSearchFields(List)}, the option is silently ignored at the
+	 * query level and a warning is logged, since the most likely cause is a
+	 * missing {@code setSearchFields(...)} call.</p>
+	 *
+	 * @param predicates  the predicate list to add to
+	 * @param cb          the criteria builder
+	 * @param root        the query root
+	 * @param queryOptions the parsed query options
+	 */
+	private void addSearchPredicate(List<Predicate> predicates, CriteriaBuilder cb, Root<T> root,
+			QueryOptions queryOptions) {
+		if (queryOptions.search == null || queryOptions.search.isEmpty())
+			return;
+		if (searchFields.isEmpty()) {
+			log.warn("$search='{}' was provided but no search fields are configured; "
+					+ "the $search option is ignored. Call setSearchFields(...) to enable it.",
+					queryOptions.search);
+			return;
+		}
+		predicates.add(createSearchPredicate(cb, root, queryOptions.search));
 	}
 
 	/**
